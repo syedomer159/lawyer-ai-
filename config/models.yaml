@@ -1,0 +1,27 @@
+# Which model plays each role, per profile (ADR-0002). Values are pydantic-ai model strings.
+# A role not listed uses its profile's `default`. Roles are defined in backend/app/llm/registry.py;
+# an unknown role or profile here fails at startup.
+# A case marked local_only always uses the `local` profile, whatever MODEL_PROFILE says.
+profiles:
+  # Everything on Ollama: free and private, but ~4 tokens/s on a CPU-only laptop.
+  local:
+    default: ollama:qwen3.5:4b
+
+  # Short, high-volume role-play turns stay local; analysis and judging go to Gemini.
+  # Worth it on a machine with a GPU; on CPU each witness/IO turn takes 20-30 s.
+  hybrid:
+    default: google:gemini-3.5-flash-lite
+    witness: ollama:qwen3.5:4b
+    io: ollama:qwen3.5:4b
+    analyst: google:gemini-3.5-flash
+    argument: google:gemini-3.5-flash
+    judge: google:gemini-3.5-flash
+    debrief: google:gemini-3.5-flash
+
+  # Default. Flash Lite for high-volume roles, Flash where reasoning quality matters.
+  cloud:
+    default: google:gemini-3.5-flash-lite
+    analyst: google:gemini-3.5-flash
+    argument: google:gemini-3.5-flash
+    judge: google:gemini-3.5-flash
+    debrief: google:gemini-3.5-flash

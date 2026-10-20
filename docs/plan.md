@@ -107,7 +107,7 @@ lawyer-ai/
 - Evals: OCR char-accuracy on generated images; retrieval recall@5 on gold Q&A.
 - **Exit:** upload case1 in the UI → search returns the right page highlighted; eval report saved.
 
-### Stage 3 — LLM layer + observability (shared by all agents)
+### Stage 3 — LLM layer + observability (shared by all agents) — DONE (see ADR-0002/0004 notes)
 - `llm/registry.py`: `get_model(role, case)` from `models.yaml` + profile + `local_only`. `usage.py`: tokens/cost per job/session from pydantic-ai's `RunUsage.cost` (built-in price table; no prices file to maintain).
 - `observability.py`: OTel → Phoenix, spans tagged `case_id`, `role`, `job_id`; `TRACE_CONTENT` toggle.
 - Prompt files loaded from `app/prompts/`, with version string recorded on each span.

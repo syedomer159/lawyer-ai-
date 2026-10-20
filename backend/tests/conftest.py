@@ -1,4 +1,10 @@
 import hashlib
+import os
+
+# Before app imports: the app's startup must not export to Phoenix from tests (test_llm captures
+# spans in memory instead). An env var beats the developer's .env.
+os.environ["TRACING"] = "false"
+
 import re
 from collections.abc import Iterator
 from pathlib import Path
@@ -6,6 +12,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 from fastapi.testclient import TestClient
+from pydantic_settings import SettingsConfigDict
 
 from app.api.deps import get_embedder, get_settings
 from app.config import REPO_ROOT, Settings
@@ -14,6 +21,13 @@ from app.main import app
 SAMPLES = REPO_ROOT / "samples"
 CASE1 = SAMPLES / "case1_state_v_arjun_verma" / "files"
 CASE2 = SAMPLES / "case2_state_v_kavita_rao" / "files"
+
+
+class TestSettings(Settings):
+    """Settings that ignore the developer's .env, so tests behave the same on every machine."""
+
+    __test__ = False  # not a pytest test class
+    model_config = SettingsConfigDict(env_file=None, extra="ignore", env_ignore_empty=True)
 
 
 class FakeEmbedder:
@@ -36,8 +50,13 @@ class FakeEmbedder:
 
 
 @pytest.fixture
+def anyio_backend() -> str:
+    return "asyncio"  # async tests run via the anyio plugin that ships with FastAPI
+
+
+@pytest.fixture
 def client(tmp_path: Path) -> Iterator[TestClient]:
-    app.dependency_overrides[get_settings] = lambda: Settings(data_dir=tmp_path)
+    app.dependency_overrides[get_settings] = lambda: TestSettings(data_dir=tmp_path)
     app.dependency_overrides[get_embedder] = FakeEmbedder
     with TestClient(app) as c:
         yield c

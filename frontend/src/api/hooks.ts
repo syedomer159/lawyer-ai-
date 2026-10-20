@@ -93,3 +93,11 @@ export function useSearch(caseId: string, q: string) {
       ),
   })
 }
+
+export function useUsage(caseId: string) {
+  return useQuery({
+    queryKey: ['usage', caseId],
+    queryFn: async () =>
+      unwrap(await api.GET('/api/cases/{case_id}/usage', { params: { path: { case_id: caseId } } })),
+  })
+}

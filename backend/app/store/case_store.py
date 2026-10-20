@@ -23,6 +23,7 @@ from app.contracts.documents import (
     PageDetail,
     SourceRef,
 )
+from app.contracts.usage import RoleUsage, UsageSummary
 
 
 def _in(values: tuple[str, ...]) -> str:
@@ -60,6 +61,24 @@ MIGRATIONS = [
         text, content='chunks', content_rowid='id', tokenize='porter unicode61'
     );
     """,
+    # v2: one row per LLM call; trace_id links the row to its Phoenix trace (ADR-0004).
+    """
+    CREATE TABLE llm_calls (
+        id INTEGER PRIMARY KEY,
+        created_at TEXT NOT NULL,
+        role TEXT NOT NULL,
+        model TEXT NOT NULL,
+        prompt TEXT NOT NULL,
+        prompt_version TEXT NOT NULL,
+        job_id TEXT,
+        session_id TEXT,
+        input_tokens INTEGER NOT NULL,
+        output_tokens INTEGER NOT NULL,
+        cost_usd REAL,
+        latency_ms INTEGER NOT NULL,
+        trace_id TEXT NOT NULL
+    );
+    """,
 ]
 
 
@@ -75,6 +94,21 @@ class ParsedPage:
     page_no: int
     text: str
     ocr: bool
+
+
+@dataclass
+class LLMCall:
+    role: str
+    model: str
+    prompt: str
+    prompt_version: str
+    input_tokens: int
+    output_tokens: int
+    cost_usd: float | None  # None = provider could not price it (not the same as free)
+    latency_ms: int
+    trace_id: str
+    job_id: str | None = None
+    session_id: str | None = None
 
 
 class CaseStore:
@@ -204,6 +238,35 @@ class CaseStore:
             (match, limit),
         ).fetchall()
         return [r[0] for r in rows]
+
+    # --- LLM usage ---------------------------------------------------------------------------
+
+    def record_llm_call(self, call: LLMCall) -> None:
+        with self.db:
+            self.db.execute(
+                "INSERT INTO llm_calls (created_at, role, model, prompt, prompt_version, job_id, "
+                "session_id, input_tokens, output_tokens, cost_usd, latency_ms, trace_id) "
+                "VALUES (datetime('now'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (call.role, call.model, call.prompt, call.prompt_version, call.job_id,
+                 call.session_id, call.input_tokens, call.output_tokens, call.cost_usd,
+                 call.latency_ms, call.trace_id),
+            )  # fmt: skip
+
+    def usage_summary(self) -> UsageSummary:
+        rows = self.db.execute(
+            "SELECT role, model, COUNT(*) AS calls, SUM(input_tokens) AS input_tokens, "
+            "SUM(output_tokens) AS output_tokens, COALESCE(SUM(cost_usd), 0) AS cost_usd, "
+            "SUM(cost_usd IS NULL) AS unpriced_calls FROM llm_calls GROUP BY role, model "
+            "ORDER BY role"
+        ).fetchall()
+        by_role = [RoleUsage(**dict(r)) for r in rows]
+        return UsageSummary(
+            calls=sum(r.calls for r in by_role),
+            input_tokens=sum(r.input_tokens for r in by_role),
+            output_tokens=sum(r.output_tokens for r in by_role),
+            cost_usd=sum(r.cost_usd for r in by_role),
+            by_role=by_role,
+        )
 
     def chunks_by_id(self, ids: list[int]) -> dict[int, tuple[SourceRef, str]]:
         if not ids:
