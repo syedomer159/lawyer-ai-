@@ -7,5 +7,5 @@ if [ -n "$py" ]; then
 fi
 ts=$(git diff --cached --name-only --diff-filter=ACM -- 'frontend/src/*.ts' 'frontend/src/*.tsx' | sed 's#^frontend/##')
 if [ -n "$ts" ]; then
-  (cd frontend && npx --no-install eslint $ts)
+  (cd frontend && npx --no-install eslint --no-warn-ignored $ts)
 fi

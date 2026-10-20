@@ -1,0 +1,223 @@
+# Synthetic case for testing. All people, places and numbers are fictional.
+id: case1
+title: State v. Arjun Verma
+court: Court of the Judicial Magistrate First Class, Navgarh
+charges: ["BNS 304(2) - snatching"]
+user_side: defence
+client: Arjun Verma
+summary: >
+  On 12-03-2026 evening a gold chain was snatched from Sunita Sharma on MG Road, Navgarh.
+  The accused Arjun Verma (24) was arrested and a chain was allegedly recovered from his house
+  on his disclosure. He says he was at a family function and was picked up a day earlier than
+  the arrest memo shows.
+
+documents:
+  - file: 01_FIR_112-2026.pdf
+    kind: text_pdf
+    title: First Information Report
+    body: |
+      FIRST INFORMATION REPORT (Under Section 173 BNSS)
+      District: Navgarh    Police Station: Civil Lines    FIR No.: 112/2026
+      Date and time of FIR: 14-03-2026 at 11:40 hrs
+      Act and Sections: Bharatiya Nyaya Sanhita, 2023 - Section 304(2)
+      Occurrence: 12-03-2026 at about 21:15 hrs
+      Place of occurrence: MG Road, near Gupta Tea Stall, about 300 m from Navgarh bus stand.
+      Informant: Smt. Sunita Sharma, W/o Late Shri R. K. Sharma, aged 52, R/o 14 Shanti Vihar, Navgarh.
+
+      Reason for delay in reporting: (blank)
+
+      Contents of information:
+      I, Sunita Sharma, state that on 12-03-2026 at about 21:15 hrs I was returning home on foot
+      from the market on MG Road. When I reached near Gupta Tea Stall, a man came from behind and
+      forcibly pulled the gold chain from my neck and ran towards the bus stand. The man was aged
+      about 25 years, of medium build, and was wearing a blue jacket. I raised an alarm but he
+      escaped. The gold chain weighed about 20 grams and is worth about Rs. 1,20,000.
+      I can identify him if shown to me.
+      Legal action may be taken.
+
+      Action taken: Case registered under Section 304(2) BNS and investigation entrusted to
+      SI Pradeep Rathore, Investigating Officer.
+      Signature of informant: Sunita Sharma
+      Signature of officer in charge: SHO, P.S. Civil Lines, Navgarh
+      ---PAGE---
+      FIR No. 112/2026 - continuation sheet
+
+      Details of property stolen: One gold chain (yellow metal), approx. 20 grams, design with
+      small round beads. No purchase bill furnished at the time of reporting.
+
+      Details of suspect: Unknown. Description as given by informant: male, about 25 years,
+      medium build, blue jacket.
+
+      Copy of FIR given free of cost to the informant on 14-03-2026.
+      Copy forwarded to the Judicial Magistrate First Class, Navgarh on 15-03-2026.
+
+  - file: 02_Statement_Sunita_Sharma_PW1.pdf
+    kind: text_pdf
+    title: Statement of complainant under Section 180 BNSS
+    body: |
+      STATEMENT UNDER SECTION 180 BNSS
+      FIR No. 112/2026, P.S. Civil Lines, Navgarh
+      Name: Smt. Sunita Sharma, aged 52.   Recorded by: SI Pradeep Rathore on 14-03-2026.
+
+      I state that on 12-03-2026 I had gone to the market to buy vegetables. While returning home
+      at about 9:15 pm I was walking on MG Road. Near Gupta Tea Stall a man came from behind me
+      and pulled my gold chain with force. Because of the jerk I fell down on the road and my
+      right elbow was bleeding. I could not see his face properly as he came from behind, but I
+      saw him running towards the bus stand. He was wearing a blue jacket.
+      Some people gathered. A rickshaw driver helped me get up. That night my son took me to the
+      District Hospital, Navgarh, where the doctor examined me.
+      I could not come to the police station on 13-03-2026 as I was unwell.
+      My chain had small round beads and was given to me at my wedding.
+
+      Read over and found correct.
+
+  - file: 03_Statement_Ramesh_Kumar_PW2.pdf
+    kind: text_pdf
+    title: Statement of eyewitness Ramesh Kumar under Section 180 BNSS
+    body: |
+      STATEMENT UNDER SECTION 180 BNSS
+      FIR No. 112/2026, P.S. Civil Lines, Navgarh
+      Name: Ramesh Kumar, S/o Mohan Lal, aged 40, owner of Gupta Tea Stall, MG Road.
+      Recorded by: SI Pradeep Rathore on 15-03-2026 at 20:30 hrs.
+
+      I run the tea stall on MG Road. On 12-03-2026 I was standing near my tea stall at about
+      8:30 pm when a man in a red jacket snatched the gold chain of an elderly lady and ran
+      towards the bus stand. The street light was on and I saw his face clearly.
+      He was thin, about 25 years old, with short hair.
+      Today the police showed me the boy they had caught. He is the same boy who snatched the
+      chain. I can identify him in court.
+
+      Read over and found correct.
+
+  - file: 04_Statement_Mohd_Irfan_PW3_scanned.pdf
+    kind: scanned_pdf
+    title: Statement of eyewitness Mohd. Irfan under Section 180 BNSS (scanned copy)
+    body: |
+      STATEMENT UNDER SECTION 180 BNSS
+      FIR No. 112/2026, P.S. Civil Lines, Navgarh
+      Name: Mohd. Irfan, S/o Abdul Rashid, aged 33, auto-rickshaw driver.
+      Recorded by: SI Pradeep Rathore on 16-03-2026.
+
+      On 12-03-2026 at around 9 pm I was waiting for passengers near Gupta Tea Stall. I heard a
+      lady shouting and saw a man running towards the bus stand. He was wearing a dark jacket,
+      I could not tell the colour. It was dark near the stall because the streetlight was not
+      working that week. I helped the lady get up. I did not see the face of the man.
+
+      Read over and found correct.
+
+  - file: 05_Arrest_Memo.pdf
+    kind: text_pdf
+    title: Arrest memo
+    body: |
+      ARREST MEMO
+      FIR No. 112/2026, P.S. Civil Lines, Navgarh.  Section 304(2) BNS.
+      Name of person arrested: Arjun Verma, S/o Dinesh Verma, aged 24,
+      R/o House No. 7, Gali No. 3, Shivpuri Colony, Navgarh.
+      Date and time of arrest: 15-03-2026 at 18:00 hrs
+      Place of arrest: Navgarh bus stand
+      Arrested by: SI Pradeep Rathore. Witness to arrest: Constable Vikram Singh No. 412.
+      Clothes worn at the time of arrest: black t-shirt and blue jeans.
+      Personal search: nothing incriminating recovered.
+      Information of arrest given to: Dinesh Verma (father) by phone at 18:30 hrs.
+      Signature of arrested person: Arjun Verma
+
+  - file: 06_Disclosure_and_Recovery_Memo.pdf
+    kind: text_pdf
+    title: Disclosure statement and recovery memo
+    body: |
+      DISCLOSURE STATEMENT AND RECOVERY MEMO
+      FIR No. 112/2026, P.S. Civil Lines, Navgarh.
+      Date: 16-03-2026 at 10:30 hrs.
+
+      The accused Arjun Verma, while in police custody, disclosed that he had hidden the snatched
+      chain in the almirah of his house and that he can get it recovered.
+      In pursuance of the disclosure, the police party along with the accused and the panch
+      witnesses reached House No. 7, Gali No. 3, Shivpuri Colony, Navgarh, where the accused took
+      out one yellow metal chain with small round beads from the almirah. One blue jacket was
+      also taken out from the same almirah.
+      Both articles were seized and sealed with the seal "PR".
+
+      Panch witnesses:
+      1. Suresh Yadav, S/o Ram Kishan, R/o Navgarh - present at the house during recovery.
+      2. Constable Vikram Singh No. 412.
+
+      Signed: SI Pradeep Rathore, Investigating Officer.
+
+  - file: 07_Affidavit_Suresh_Yadav_scanned.pdf
+    kind: scanned_pdf
+    title: Affidavit of Suresh Yadav (defence document, scanned copy)
+    body: |
+      AFFIDAVIT
+      I, Suresh Yadav, S/o Ram Kishan, aged 45, R/o Navgarh, do hereby solemnly affirm:
+
+      1. That on 16-03-2026 I was called to P.S. Civil Lines, Navgarh by Constable Vikram Singh.
+      2. That I signed some papers at the police station on 16-03-2026. I was not taken to the
+         house of Arjun Verma and I did not see any chain being recovered.
+      3. That I have signed papers for the police in other cases also.
+
+      Deponent: Suresh Yadav
+      Verified at Navgarh on 02-04-2026.
+
+  - file: 08_CCTV_Still_CAM03.png
+    kind: image
+    style: cctv
+    title: CCTV still from MG Road junction camera
+    texts:
+      - "CAM-03  MG ROAD JUNCTION  12-03-2026  20:41:07"
+      - "Exhibit P-9: still from CCTV footage seized by IO on 17-03-2026"
+
+  - file: 09_Municipal_Letter_Streetlight.jpg
+    kind: image
+    style: document_photo
+    title: Municipal Council reply on streetlight status (photographed letter)
+    texts:
+      - "NAVGARH MUNICIPAL COUNCIL - Electrical Wing"
+      - "Ref: RTI/EL/2026/318            Date: 20-03-2026"
+      - "Subject: Status of streetlight pole MG-17, MG Road"
+      - "In reply to your RTI application, it is informed that"
+      - "streetlight pole no. MG-17 near Gupta Tea Stall was"
+      - "non-functional from 08-03-2026 to 18-03-2026."
+      - "It was repaired on 18-03-2026 against complaint no. 4471."
+      - "Junior Engineer (Electrical), Navgarh Municipal Council"
+
+  - file: 10_MLC_Report.pdf
+    kind: text_pdf
+    title: Medico-legal certificate
+    body: |
+      MEDICO-LEGAL CERTIFICATE
+      District Hospital, Navgarh.   MLC No. 2231/2026
+      Date and time of examination: 12-03-2026 at 22:30 hrs
+      Name: Sunita Sharma, female, aged 52. Brought by: son (Rohit Sharma).
+      History as given: alleged chain snatching on MG Road at about 9 pm.
+
+      On examination:
+      Patient conscious and oriented. Vitals stable.
+      No external injury seen. No abrasion on neck or elbows.
+      Complains of mild pain in right shoulder.
+
+      Opinion: No injury. Advised analgesics.
+      Police informed: PCR, P.S. Civil Lines at 22:45 hrs on 12-03-2026.
+      Dr. Meera Joshi, Casualty Medical Officer.
+
+  - file: 11_Client_Interview_Notes.txt
+    kind: txt
+    title: Defence counsel's client interview notes
+    body: |
+      Client interview - Arjun Verma - 22-03-2026 (privileged, defence counsel notes)
+
+      Alibi: On 12-03-2026 from about 7 pm to 11 pm Arjun was at his cousin's sangeet function at
+      Shivpuri Colony community hall. He has photos and videos on his phone with timestamps.
+      Cousin Neha Verma and uncle Rajesh Verma can confirm.
+
+      Arrest: Arjun says police picked him up from his house on 14-03-2026 at around 8 pm, not on
+      15-03-2026 at the bus stand as the arrest memo says. His mother saw it.
+
+      Jacket: He owns only a black jacket. The blue jacket shown in the recovery memo is not his.
+
+      Identification: No test identification parade was held. Ramesh Kumar was shown Arjun at the
+      police station before his statement was recorded.
+
+      Panch witness: Neighbours say Suresh Yadav is a regular police witness. Affidavit obtained.
+
+      To do: apply for CCTV footage of the community hall; ask for the BSA certificate for the
+      CCTV still; ask whether the search and recovery was video recorded.

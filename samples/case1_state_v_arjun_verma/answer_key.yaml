@@ -1,0 +1,151 @@
+# Ground truth for evals. Every ref is {doc, page, quote}; quote is an exact (whitespace-
+# normalised) substring of that page's text in manifest.json. Checked by samples/validate.py.
+# effect = effect on OUR client (defence): helps | hurts.
+case: case1
+user_side: defence
+
+parties:
+  - {name: Arjun Verma, role: accused}
+  - {name: Sunita Sharma, role: complainant}
+  - {name: Ramesh Kumar, role: witness}
+  - {name: Mohd. Irfan, role: witness}
+  - {name: Suresh Yadav, role: panch}
+  - {name: Pradeep Rathore, role: io}
+  - {name: Vikram Singh, role: police}
+  - {name: Meera Joshi, role: doctor}
+
+contradictions:
+  - id: C1
+    aspect: time of incident
+    type: testimony_vs_document
+    severity: high
+    effect: helps
+    explanation: FIR and complainant say about 9:15 pm; eyewitness Ramesh says about 8:30 pm; CCTV still is stamped 20:41:07.
+    refs:
+      - {doc: 01_FIR_112-2026.pdf, page: 1, quote: "Occurrence: 12-03-2026 at about 21:15 hrs"}
+      - {doc: 03_Statement_Ramesh_Kumar_PW2.pdf, page: 1, quote: "at about 8:30 pm when a man in a red jacket"}
+      - {doc: 08_CCTV_Still_CAM03.png, page: 1, quote: "12-03-2026 20:41:07"}
+  - id: C2
+    aspect: jacket colour of the snatcher
+    type: testimony_vs_testimony
+    severity: high
+    effect: helps
+    explanation: Complainant says blue jacket, Ramesh says red jacket, Irfan could not tell the colour.
+    refs:
+      - {doc: 02_Statement_Sunita_Sharma_PW1.pdf, page: 1, quote: "He was wearing a blue jacket."}
+      - {doc: 03_Statement_Ramesh_Kumar_PW2.pdf, page: 1, quote: "a man in a red jacket snatched the gold chain"}
+      - {doc: 04_Statement_Mohd_Irfan_PW3_scanned.pdf, page: 1, quote: "He was wearing a dark jacket, I could not tell the colour."}
+  - id: C3
+    aspect: lighting at the spot / visibility
+    type: testimony_vs_document
+    severity: high
+    effect: helps
+    explanation: Ramesh claims the street light was on and he saw the face clearly; Irfan says it was dark and the light was not working; the municipal letter says pole MG-17 was non-functional from 08-03 to 18-03-2026.
+    refs:
+      - {doc: 03_Statement_Ramesh_Kumar_PW2.pdf, page: 1, quote: "The street light was on and I saw his face clearly."}
+      - {doc: 04_Statement_Mohd_Irfan_PW3_scanned.pdf, page: 1, quote: "It was dark near the stall because the streetlight was not working that week."}
+      - {doc: 09_Municipal_Letter_Streetlight.jpg, page: 1, quote: "non-functional from 08-03-2026 to 18-03-2026."}
+  - id: C4
+    aspect: injury to the complainant
+    type: testimony_vs_document
+    severity: medium
+    effect: helps
+    explanation: Complainant says she fell and her right elbow was bleeding; the MLC the same night found no external injury.
+    refs:
+      - {doc: 02_Statement_Sunita_Sharma_PW1.pdf, page: 1, quote: "my right elbow was bleeding"}
+      - {doc: 10_MLC_Report.pdf, page: 1, quote: "No external injury seen. No abrasion on neck or elbows."}
+  - id: C5
+    aspect: presence of panch witness at recovery
+    type: document_vs_document
+    severity: high
+    effect: helps
+    explanation: Recovery memo says Suresh Yadav was present at the house; his affidavit says he only signed papers at the police station.
+    refs:
+      - {doc: 06_Disclosure_and_Recovery_Memo.pdf, page: 1, quote: "present at the house during recovery"}
+      - {doc: 07_Affidavit_Suresh_Yadav_scanned.pdf, page: 1, quote: "I was not taken to the house of Arjun Verma and I did not see any chain being recovered."}
+  - id: C6
+    aspect: date, time and place of arrest
+    type: document_vs_document
+    severity: medium
+    effect: helps
+    explanation: Arrest memo says 15-03-2026 18:00 at the bus stand; client says police picked him up from home on 14-03-2026 at about 8 pm (needs proof, e.g. mother's evidence).
+    refs:
+      - {doc: 05_Arrest_Memo.pdf, page: 1, quote: "Date and time of arrest: 15-03-2026 at 18:00 hrs"}
+      - {doc: 11_Client_Interview_Notes.txt, page: 1, quote: "police picked him up from his house on 14-03-2026 at around 8 pm"}
+  - id: C7
+    aspect: complainant's ability to identify the snatcher
+    type: testimony_vs_document
+    severity: medium
+    effect: helps
+    explanation: In the FIR the complainant says she can identify him; in her statement she says she could not see his face as he came from behind.
+    refs:
+      - {doc: 01_FIR_112-2026.pdf, page: 1, quote: "I can identify him if shown to me."}
+      - {doc: 02_Statement_Sunita_Sharma_PW1.pdf, page: 1, quote: "I could not see his face properly as he came from behind"}
+
+gaps:
+  - id: G1
+    element: Prompt FIR / explanation of delay
+    status: weak
+    explanation: Police were informed by the hospital at 22:45 on 12-03-2026 but the FIR was registered on 14-03-2026 at 11:40 with the delay column blank.
+    refs:
+      - {doc: 01_FIR_112-2026.pdf, page: 1, quote: "Date and time of FIR: 14-03-2026 at 11:40 hrs"}
+      - {doc: 01_FIR_112-2026.pdf, page: 1, quote: "Reason for delay in reporting: (blank)"}
+      - {doc: 10_MLC_Report.pdf, page: 1, quote: "Police informed: PCR, P.S. Civil Lines at 22:45 hrs on 12-03-2026."}
+  - id: G2
+    element: Identity of the accused (test identification parade)
+    status: missing
+    explanation: No TIP was held; Ramesh was shown the accused at the police station before his statement was recorded, so his dock identification is weak.
+    refs:
+      - {doc: 03_Statement_Ramesh_Kumar_PW2.pdf, page: 1, quote: "Today the police showed me the boy they had caught."}
+      - {doc: 11_Client_Interview_Notes.txt, page: 1, quote: "No test identification parade was held."}
+  - id: G3
+    element: Audio-video recording of search and seizure (BNSS 105)
+    status: missing
+    explanation: The recovery memo does not mention any audio-video recording of the search and seizure.
+    refs:
+      - {doc: 06_Disclosure_and_Recovery_Memo.pdf, page: 1, quote: "Both articles were seized and sealed with the seal \"PR\"."}
+  - id: G4
+    element: Independent witness to recovery
+    status: weak
+    explanation: The only witnesses to the recovery are a police constable and a panch who denies being present.
+    refs:
+      - {doc: 06_Disclosure_and_Recovery_Memo.pdf, page: 1, quote: "2. Constable Vikram Singh No. 412."}
+      - {doc: 07_Affidavit_Suresh_Yadav_scanned.pdf, page: 1, quote: "That I have signed papers for the police in other cases also."}
+  - id: G5
+    element: Identification of the stolen property
+    status: weak
+    explanation: No purchase bill and no formal identification of the recovered chain by the complainant.
+    refs:
+      - {doc: 01_FIR_112-2026.pdf, page: 2, quote: "No purchase bill furnished at the time of reporting."}
+  - id: G6
+    element: Admissibility of CCTV still (electronic record certificate)
+    status: missing
+    explanation: CCTV still was seized but there is no certificate for the electronic record on file.
+    refs:
+      - {doc: 08_CCTV_Still_CAM03.png, page: 1, quote: "Exhibit P-9: still from CCTV footage seized by IO on 17-03-2026"}
+      - {doc: 11_Client_Interview_Notes.txt, page: 1, quote: "ask for the BSA certificate for the"}
+
+hurts:
+  - id: H1
+    explanation: Ramesh Kumar says he saw the face clearly and can identify the accused in court.
+    refs:
+      - {doc: 03_Statement_Ramesh_Kumar_PW2.pdf, page: 1, quote: "I can identify him in court."}
+  - id: H2
+    explanation: A chain matching the description and a blue jacket (matching the FIR description) were allegedly recovered from the accused's house on his disclosure.
+    refs:
+      - {doc: 06_Disclosure_and_Recovery_Memo.pdf, page: 1, quote: "One blue jacket was"}
+
+retrieval:
+  - {q: "What time does the CCTV still show?", doc: 08_CCTV_Still_CAM03.png, page: 1, quote: "20:41:07"}
+  - {q: "When was the FIR registered?", doc: 01_FIR_112-2026.pdf, page: 1, quote: "14-03-2026 at 11:40 hrs"}
+  - {q: "Who were the panch witnesses to the recovery?", doc: 06_Disclosure_and_Recovery_Memo.pdf, page: 1, quote: "Suresh Yadav, S/o Ram Kishan"}
+  - {q: "What did the doctor find on examining the complainant?", doc: 10_MLC_Report.pdf, page: 1, quote: "No external injury seen."}
+  - {q: "Where and when was the accused arrested?", doc: 05_Arrest_Memo.pdf, page: 1, quote: "Place of arrest: Navgarh bus stand"}
+  - {q: "Was the streetlight near the tea stall working?", doc: 09_Municipal_Letter_Streetlight.jpg, page: 1, quote: "non-functional from 08-03-2026 to 18-03-2026."}
+  - {q: "What colour jacket did Ramesh Kumar describe?", doc: 03_Statement_Ramesh_Kumar_PW2.pdf, page: 1, quote: "red jacket"}
+  - {q: "What does the auto driver say about the lighting?", doc: 04_Statement_Mohd_Irfan_PW3_scanned.pdf, page: 1, quote: "the streetlight was not working that week"}
+  - {q: "What is the accused's alibi?", doc: 11_Client_Interview_Notes.txt, page: 1, quote: "cousin's sangeet function"}
+  - {q: "What was the property stolen?", doc: 01_FIR_112-2026.pdf, page: 2, quote: "One gold chain (yellow metal), approx. 20 grams"}
+
+# Sections used in these documents that we could not confirm from a source; check before relying.
+unverified_sections: ["BSA electronic-record certificate section (63?)", "BNSS test identification provision"]

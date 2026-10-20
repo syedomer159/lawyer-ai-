@@ -1,0 +1,58 @@
+# Scripted mock-trial round for evals. The lawyer (defence) lines are fixed; the agents reply.
+# Per turn:
+#   targets       - contradiction / gap ids this question is meant to expose (answer_key.yaml)
+#   grounded_in   - what the answering agent's reply must stay consistent with
+#   expect_objection - the opposing counsel agent should object (and the judge should sustain)
+case: case2
+user_side: defence
+
+rounds:
+  - id: R1
+    phase: cross_examination
+    witness: Anil Deshmukh
+    turns:
+      - say: "Mr. Deshmukh, how far were you from Mr. Patil when the car hit him?"
+        targets: [C5]
+        grounded_in: {doc: 02_Statement_Anil_Deshmukh_PW1.pdf, page: 1, quote: "I was about 10 steps away from"}
+      - say: "The police site plan places you near the Hanuman temple, about 60 metres away. Is the site plan wrong?"
+        targets: [C5]
+      - say: "What colour was the car?"
+        targets: [C2]
+        grounded_in: {doc: 02_Statement_Anil_Deshmukh_PW1.pdf, page: 1, quote: "A silver-grey car"}
+      - say: "You say the car was going at 80 km per hour. The skid marks show 25 to 30. How did you measure the speed?"
+        targets: [C4]
+        grounded_in: {doc: 02_Statement_Anil_Deshmukh_PW1.pdf, page: 1, quote: "about 80 km per hour"}
+      - say: "You say he was hit on his left side, but every injury is on his right side. Which is correct?"
+        targets: [C3]
+        grounded_in: {doc: 02_Statement_Anil_Deshmukh_PW1.pdf, page: 1, quote: "hit him on his left side"}
+      - say: "You are only supporting the prosecution because the deceased was your friend and you want someone punished, isn't it?"
+        targets: []
+        expect_objection: false  # proper cross: suggesting bias is allowed; judge should allow it
+
+  - id: R2
+    phase: cross_examination
+    witness: Rahul More  # first responder; knows only his own statement
+    turns:
+      - say: "Head Constable, you measured skid marks of 4.2 metres. Did you calculate the speed from them?"
+        targets: [C4]
+        grounded_in: {doc: 04_Statement_HC_Rahul_More_PW3.pdf, page: 1, quote: "Skid marks of 4.2 metres were seen behind the car."}
+      - say: "When you reached at 7:25, the incident had happened fifteen minutes earlier. You cannot say who was driving, can you?"
+        targets: [C1, G1]
+      - say: "Did you collect the CCTV of the Bharat Petrol Pump facing the road?"
+        targets: [G2]
+      - say: "Tell the court about your own disciplinary record for taking bribes."
+        targets: []
+        expect_objection: true  # no basis in the record, irrelevant
+
+final_argument:
+  - "The only witness who says a woman was driving stood 60 metres away according to the police's own site plan."
+  - "He gets the colour, the speed, the side of impact, and the zebra crossing wrong; the physical evidence contradicts him each time."
+  - "The independent vendor, 8 metres away, saw a man driving and the old man stepping out from behind a parked bus."
+  - "Skid marks show 25 to 30 km per hour: there is no evidence of rash or negligent driving."
+  - "The accused herself called the ambulance at 7:12 and stayed at the spot."
+
+must_not_invent:
+  - "the accused was drunk"
+  - "the accused's licence was invalid"
+  - "the brakes had failed"
+  - "Manoj Shinde has been arrested"

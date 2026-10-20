@@ -1,0 +1,181 @@
+# Synthetic case for testing. All people, places and numbers are fictional.
+id: case2
+title: State v. Kavita Rao
+court: Court of the Chief Judicial Magistrate, Navgarh
+charges: ["BNS 106(1) - causing death by negligence", "BNS 281 - rash driving on a public way"]
+user_side: defence
+client: Kavita Rao
+summary: >
+  On 02-05-2026 at about 7:10 am pedestrian Harish Patil (61) was hit by a white SUV on Station
+  Road, Navgarh, and died. The registered owner Kavita Rao (34) was found at the spot and is
+  charged as the driver. She says her employed driver Manoj Shinde was driving and ran away.
+
+documents:
+  - file: 01_FIR_208-2026.pdf
+    kind: text_pdf
+    title: First Information Report
+    body: |
+      FIRST INFORMATION REPORT (Under Section 173 BNSS)
+      District: Navgarh    Police Station: Station Road    FIR No.: 208/2026
+      Date and time of FIR: 02-05-2026 at 09:30 hrs
+      Act and Sections: Bharatiya Nyaya Sanhita, 2023 - Sections 106(1), 281
+      Occurrence: 02-05-2026 at about 07:10 hrs
+      Place of occurrence: Station Road, near the MSRTC bus stop, Navgarh.
+      Informant: Nitin Patil, S/o Harish Patil, aged 35, R/o 22 Gandhi Nagar, Navgarh.
+
+      Contents of information:
+      I, Nitin Patil, state that my father Harish Patil, aged 61, goes for a morning walk daily.
+      On 02-05-2026 at about 7:20 am I received a phone call from a neighbour that my father had
+      met with an accident on Station Road. When I reached the spot, the people there told me that
+      a white SUV driven by a lady at high speed hit my father while he was crossing the road. My
+      father was taken to the District Hospital, Navgarh, where he was declared dead.
+      The vehicle is a white Hyundai Creta, registration no. NV-01-CK-4521.
+      Legal action may be taken against the driver.
+
+      Action taken: Case registered and investigation entrusted to ASI Sunil Gaikwad.
+
+  - file: 02_Statement_Anil_Deshmukh_PW1.pdf
+    kind: text_pdf
+    title: Statement of eyewitness Anil Deshmukh under Section 180 BNSS
+    body: |
+      STATEMENT UNDER SECTION 180 BNSS
+      FIR No. 208/2026, P.S. Station Road, Navgarh
+      Name: Anil Deshmukh, aged 58, retired clerk, morning walker.
+      Recorded by: ASI Sunil Gaikwad on 02-05-2026.
+
+      On 02-05-2026 at about 7:10 am I was walking on Station Road. I was about 10 steps away from
+      Harish Patil. He was crossing slowly at the zebra crossing, from the divider side towards the
+      footpath. A silver-grey car came at very high speed, about 80 km per hour, and hit him on his
+      left side. The car was driven by a woman with long hair. Nobody else was in the car.
+      The woman got down after the accident. I know Harish Patil from the walking group.
+
+      Read over and found correct.
+
+  - file: 03_Statement_Lata_Pawar_PW2_scanned.pdf
+    kind: scanned_pdf
+    title: Statement of eyewitness Lata Pawar under Section 180 BNSS (scanned copy)
+    body: |
+      STATEMENT UNDER SECTION 180 BNSS
+      FIR No. 208/2026, P.S. Station Road, Navgarh
+      Name: Smt. Lata Pawar, aged 45, vegetable vendor at the MSRTC bus stop.
+      Recorded by: ASI Sunil Gaikwad on 03-05-2026.
+
+      I sell vegetables near the bus stop. On 02-05-2026 at about 7 am a bus was parked at the bus
+      stop. The old man suddenly came onto the road from behind the parked bus. A white car hit him.
+      The car was not very fast. A man was driving and a lady was sitting next to him.
+      After the accident the man got out and went away towards the railway station. The lady stayed
+      and was phoning someone.
+
+      Read over and found correct.
+
+  - file: 04_Statement_HC_Rahul_More_PW3.pdf
+    kind: text_pdf
+    title: Statement of Head Constable Rahul More (first responder)
+    body: |
+      STATEMENT UNDER SECTION 180 BNSS
+      FIR No. 208/2026, P.S. Station Road, Navgarh
+      Name: Head Constable Rahul More No. 233, traffic duty.
+      Recorded by: ASI Sunil Gaikwad on 02-05-2026.
+
+      On 02-05-2026 at about 7:25 am I reached the spot on information from control room.
+      The injured had already been taken in the 108 ambulance. A white Hyundai Creta NV-01-CK-4521
+      was standing on the road. The lady Kavita Rao was present near the car. No male driver was
+      present at the spot. Skid marks of 4.2 metres were seen behind the car. The speed of the car
+      appears to have been high. I informed the police station.
+
+      Read over and found correct.
+
+  - file: 05_Post_Mortem_Report.pdf
+    kind: text_pdf
+    title: Post-mortem report
+    body: |
+      POST-MORTEM REPORT
+      District Hospital, Navgarh.   PM No. 118/2026
+      Name of deceased: Harish Patil, male, aged 61.
+      Date and time of post-mortem: 02-05-2026 at 14:00 hrs.
+
+      External injuries:
+      1. Lacerated wound 6 x 2 cm over right parietal region of scalp.
+      2. Abrasion 10 x 4 cm over right hip and right thigh.
+      3. Deformity of right thigh; fracture of right femur on dissection.
+      4. Abrasions over both palms.
+      No injuries on the left side of the body.
+
+      Internal: Fracture of right parietal bone with subdural haemorrhage.
+      Cause of death: Head injury, consistent with a road traffic accident.
+      Opinion: Injuries on the right side indicate primary impact on the right side of the body.
+      Dr. Prakash Kulkarni, Medical Officer.
+
+  - file: 06_Mechanical_Inspection_Report.pdf
+    kind: text_pdf
+    title: Motor vehicle inspection report
+    body: |
+      MOTOR VEHICLE INSPECTION REPORT
+      Office of the Regional Transport Officer, Navgarh.
+      Vehicle: Hyundai Creta, registration no. NV-01-CK-4521, colour: Pearl White.
+      Date of inspection: 03-05-2026.
+
+      Brakes: working properly. Steering: working properly. Tyres: in good condition.
+      Damage: front left bumper broken, left headlight broken, dent on the left side of the bonnet.
+      No damage on the right side of the vehicle.
+      Skid marks measured at site by IO: 4.2 metres. Skid marks of 4.2 m length indicate a speed of
+      approximately 25 to 30 km per hour at the time of braking.
+      Opinion: The accident was not due to any mechanical defect.
+      Motor Vehicle Inspector, RTO Navgarh.
+
+  - file: 07_Site_Plan_Sketch.png
+    kind: image
+    style: site_plan
+    title: Site plan prepared by the Investigating Officer
+    texts:
+      - "SITE PLAN - FIR 208/2026 - Station Road, Navgarh (not to scale)"
+      - "X = point of impact"
+      - "A = PW1 Anil Deshmukh, near Hanuman temple, approx. 60 m north of X"
+      - "B = PW2 Lata Pawar's vegetable stall, 8 m west of X"
+      - "C = parked MSRTC bus at bus stop, just south of X"
+      - "No zebra crossing at X. Nearest zebra crossing 150 m south."
+      - "Prepared by ASI Sunil Gaikwad on 02-05-2026"
+
+  - file: 08_Vehicle_Damage_Photo.jpg
+    kind: image
+    style: vehicle
+    title: Photograph of damage to the vehicle
+    texts:
+      - "Exhibit P-6: front-left damage, vehicle NV-01-CK-4521"
+      - "Photographed on 02-05-2026 at P.S. Station Road"
+
+  - file: 09_Ambulance_Call_Log.jpg
+    kind: image
+    style: document_photo
+    title: 108 ambulance call log (defence document)
+    texts:
+      - "108 EMERGENCY RESPONSE SERVICE - CALL LOG EXTRACT"
+      - "Call ID: 108-NVG-2026-050207"
+      - "Date/time of call: 02-05-2026 07:12:40"
+      - "Caller name given: Kavita Rao"
+      - "Location: Station Road near MSRTC bus stop, Navgarh"
+      - "Nature: road accident, one pedestrian injured"
+      - "Ambulance dispatched 07:13, reached 07:21"
+
+  - file: 10_Client_Interview_Notes.txt
+    kind: txt
+    title: Defence counsel's client interview notes
+    body: |
+      Client interview - Kavita Rao - 06-05-2026 (privileged, defence counsel notes)
+
+      Driver: Kavita says her employed driver Manoj Shinde (employed since 2024) was driving. She
+      was in the front passenger seat. After the accident Manoj panicked and ran away towards the
+      railway station. She stayed, called 108 at about 7:12 am and waited for the police.
+      Police recorded her as the driver because she was the only one at the car.
+
+      Accident: The old man came suddenly from behind the parked MSRTC bus. Manoj braked at once.
+      Speed was low because they had just left the petrol pump.
+
+      CCTV: She told ASI Gaikwad on 02-05-2026 to collect the CCTV of Bharat Petrol Pump at the
+      corner, which faces the road. No CCTV appears in the police papers.
+
+      Manoj Shinde: phone switched off since 02-05-2026. Salary records and his licence copy are
+      with Kavita.
+
+      To do: application for preservation of petrol pump CCTV; summon Manoj's salary register;
+      cross-examine PW1 on his distance from the spot and the zebra crossing.

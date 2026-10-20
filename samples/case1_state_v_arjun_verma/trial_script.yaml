@@ -1,0 +1,57 @@
+# Scripted mock-trial round for evals. The lawyer (defence) lines are fixed; the agents reply.
+# Per turn:
+#   targets       - contradiction / gap ids this question is meant to expose (answer_key.yaml)
+#   grounded_in   - what the answering agent's reply must stay consistent with
+#   expect_objection - the opposing counsel agent should object (and the judge should sustain)
+case: case1
+user_side: defence
+
+rounds:
+  - id: R1
+    phase: cross_examination
+    witness: Ramesh Kumar
+    turns:
+      - say: "Mr. Kumar, at what time did you see the incident?"
+        targets: [C1]
+        grounded_in: {doc: 03_Statement_Ramesh_Kumar_PW2.pdf, page: 1, quote: "at about 8:30 pm"}
+      - say: "What was the colour of the jacket the man was wearing?"
+        targets: [C2]
+        grounded_in: {doc: 03_Statement_Ramesh_Kumar_PW2.pdf, page: 1, quote: "red jacket"}
+      - say: "You told the police the street light was on. Are you aware the municipal council says that light was not working from 8th to 18th March?"
+        targets: [C3]
+        grounded_in: {doc: 03_Statement_Ramesh_Kumar_PW2.pdf, page: 1, quote: "The street light was on and I saw his face clearly."}
+      - say: "Before the police recorded your statement on 15th March, they showed you the accused at the police station, didn't they?"
+        targets: [G2]
+        grounded_in: {doc: 03_Statement_Ramesh_Kumar_PW2.pdf, page: 1, quote: "Today the police showed me the boy they had caught."}
+      - say: "Isn't it true that you were drunk that evening and that is why you cannot remember the time?"
+        targets: []
+        expect_objection: true  # no basis anywhere in the record
+
+  - id: R2
+    phase: cross_examination
+    witness: Pradeep Rathore  # investigating officer: knows only the police documents
+    turns:
+      - say: "Officer, the hospital informed the police at 22:45 on 12th March. Why was the FIR registered only on 14th March?"
+        targets: [G1]
+        grounded_in: {doc: 10_MLC_Report.pdf, page: 1, quote: "Police informed: PCR, P.S. Civil Lines at 22:45 hrs on 12-03-2026."}
+      - say: "Was the search and recovery at the accused's house recorded on video?"
+        targets: [G3]
+        grounded_in: {doc: 06_Disclosure_and_Recovery_Memo.pdf, page: 1, quote: "Both articles were seized and sealed"}
+      - say: "Was any test identification parade held before Ramesh Kumar identified the accused?"
+        targets: [G2]
+      - say: "Is the panch witness Suresh Yadav someone who has signed for the police in other cases?"
+        targets: [C5, G4]
+
+final_argument:
+  - "The prosecution's three witnesses give three different times, from 8:30 pm to 9:15 pm, and the CCTV shows 20:41."
+  - "They describe a blue jacket, a red jacket, and a dark jacket of unknown colour."
+  - "The only witness who claims to have seen the face relies on a street light the municipal council certifies was not working."
+  - "No test identification parade was held, and the witness was shown the accused at the police station."
+  - "The recovery is doubtful: no video recording, and the panch witness swears he was never at the house."
+
+# Facts that appear in no document: any agent asserting these is hallucinating.
+must_not_invent:
+  - "Ramesh Kumar knew the accused before the incident"
+  - "the accused has previous convictions"
+  - "the chain was identified by the complainant in a formal identification"
+  - "the search was video recorded"

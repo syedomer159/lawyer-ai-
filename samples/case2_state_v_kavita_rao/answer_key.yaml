@@ -1,0 +1,129 @@
+# Ground truth for evals. Every ref is {doc, page, quote}; quote is an exact (whitespace-
+# normalised) substring of that page's text in manifest.json. Checked by samples/validate.py.
+# effect = effect on OUR client (defence): helps | hurts.
+case: case2
+user_side: defence
+
+parties:
+  - {name: Kavita Rao, role: accused}
+  - {name: Harish Patil, role: other}  # deceased
+  - {name: Nitin Patil, role: complainant}
+  - {name: Anil Deshmukh, role: witness}
+  - {name: Lata Pawar, role: witness}
+  - {name: Rahul More, role: police}
+  - {name: Sunil Gaikwad, role: io}
+  - {name: Prakash Kulkarni, role: doctor}
+  - {name: Manoj Shinde, role: other}  # alleged real driver
+
+contradictions:
+  - id: C1
+    aspect: who was driving
+    type: testimony_vs_testimony
+    severity: high
+    effect: helps
+    explanation: Anil says a woman was driving alone; Lata says a man was driving and a lady sat next to him and the man went away; client says her driver Manoj was driving.
+    refs:
+      - {doc: 02_Statement_Anil_Deshmukh_PW1.pdf, page: 1, quote: "The car was driven by a woman with long hair. Nobody else was in the car."}
+      - {doc: 03_Statement_Lata_Pawar_PW2_scanned.pdf, page: 1, quote: "A man was driving and a lady was sitting next to him."}
+      - {doc: 10_Client_Interview_Notes.txt, page: 1, quote: "her employed driver Manoj Shinde (employed since 2024) was driving"}
+  - id: C2
+    aspect: colour of the vehicle
+    type: testimony_vs_document
+    severity: medium
+    effect: helps
+    explanation: Anil describes a silver-grey car; the vehicle is Pearl White per RTO report and other witnesses.
+    refs:
+      - {doc: 02_Statement_Anil_Deshmukh_PW1.pdf, page: 1, quote: "A silver-grey car came at very high speed"}
+      - {doc: 06_Mechanical_Inspection_Report.pdf, page: 1, quote: "colour: Pearl White"}
+  - id: C3
+    aspect: direction of crossing and side of impact
+    type: testimony_vs_physical
+    severity: high
+    effect: helps
+    explanation: Anil says the car hit the victim on his left side while crossing from the divider; post-mortem shows only right-side injuries and the car's damage is front-left, which fits a pedestrian entering from the kerb side (behind the bus).
+    refs:
+      - {doc: 02_Statement_Anil_Deshmukh_PW1.pdf, page: 1, quote: "from the divider side towards the footpath"}
+      - {doc: 02_Statement_Anil_Deshmukh_PW1.pdf, page: 1, quote: "hit him on his left side"}
+      - {doc: 05_Post_Mortem_Report.pdf, page: 1, quote: "No injuries on the left side of the body."}
+      - {doc: 06_Mechanical_Inspection_Report.pdf, page: 1, quote: "front left bumper broken"}
+  - id: C4
+    aspect: speed of the vehicle
+    type: testimony_vs_physical
+    severity: high
+    effect: helps
+    explanation: Anil says about 80 km/h and HC More says speed appears high; the skid-mark estimate is 25 to 30 km/h; Lata says the car was not very fast.
+    refs:
+      - {doc: 02_Statement_Anil_Deshmukh_PW1.pdf, page: 1, quote: "about 80 km per hour"}
+      - {doc: 04_Statement_HC_Rahul_More_PW3.pdf, page: 1, quote: "The speed of the car appears to have been high."}
+      - {doc: 06_Mechanical_Inspection_Report.pdf, page: 1, quote: "approximately 25 to 30 km per hour at the time of braking"}
+      - {doc: 03_Statement_Lata_Pawar_PW2_scanned.pdf, page: 1, quote: "The car was not very fast."}
+  - id: C5
+    aspect: eyewitness's distance from the spot
+    type: testimony_vs_document
+    severity: medium
+    effect: helps
+    explanation: Anil says he was about 10 steps away; the IO's own site plan puts him about 60 m north of the point of impact.
+    refs:
+      - {doc: 02_Statement_Anil_Deshmukh_PW1.pdf, page: 1, quote: "I was about 10 steps away from"}
+      - {doc: 07_Site_Plan_Sketch.png, page: 1, quote: "approx. 60 m north of X"}
+  - id: C6
+    aspect: how and where the victim entered the road
+    type: testimony_vs_document
+    severity: medium
+    effect: helps
+    explanation: Anil says the victim was crossing slowly at the zebra crossing; the site plan shows no zebra crossing at the spot, and Lata says he came suddenly from behind a parked bus.
+    refs:
+      - {doc: 02_Statement_Anil_Deshmukh_PW1.pdf, page: 1, quote: "He was crossing slowly at the zebra crossing"}
+      - {doc: 07_Site_Plan_Sketch.png, page: 1, quote: "No zebra crossing at X."}
+      - {doc: 03_Statement_Lata_Pawar_PW2_scanned.pdf, page: 1, quote: "The old man suddenly came onto the road from behind the parked bus."}
+
+gaps:
+  - id: G1
+    element: Identity of the driver
+    status: weak
+    explanation: Only Anil (60 m away per site plan) says a woman was driving; Lata contradicts him; no other proof of who was at the wheel.
+    refs:
+      - {doc: 02_Statement_Anil_Deshmukh_PW1.pdf, page: 1, quote: "The car was driven by a woman with long hair."}
+  - id: G2
+    element: CCTV evidence
+    status: missing
+    explanation: Accused asked the IO to collect the petrol pump CCTV facing the road; no CCTV is in the police papers.
+    refs:
+      - {doc: 10_Client_Interview_Notes.txt, page: 1, quote: "No CCTV appears in the police papers."}
+  - id: G3
+    element: Rashness or negligence (BNS 106(1) / 281)
+    status: weak
+    explanation: Objective speed estimate is 25 to 30 km/h, no mechanical defect, and the victim came from behind a parked bus away from any zebra crossing.
+    refs:
+      - {doc: 06_Mechanical_Inspection_Report.pdf, page: 1, quote: "approximately 25 to 30 km per hour at the time of braking"}
+      - {doc: 07_Site_Plan_Sketch.png, page: 1, quote: "Nearest zebra crossing 150 m south."}
+  - id: G4
+    element: FIR based on eyewitness information
+    status: weak
+    explanation: The informant was not an eyewitness; the FIR repeats what unnamed people at the spot said.
+    refs:
+      - {doc: 01_FIR_208-2026.pdf, page: 1, quote: "the people there told me that"}
+
+hurts:
+  - id: H1
+    explanation: Kavita Rao is the registered owner and was the only person found with the car; HC More saw no male driver.
+    refs:
+      - {doc: 04_Statement_HC_Rahul_More_PW3.pdf, page: 1, quote: "No male driver was"}
+  - id: H2
+    explanation: Anil, a known acquaintance of the deceased, positively says a woman was driving alone.
+    refs:
+      - {doc: 02_Statement_Anil_Deshmukh_PW1.pdf, page: 1, quote: "Nobody else was in the car."}
+
+retrieval:
+  - {q: "What was the cause of death?", doc: 05_Post_Mortem_Report.pdf, page: 1, quote: "Cause of death: Head injury"}
+  - {q: "How long were the skid marks?", doc: 04_Statement_HC_Rahul_More_PW3.pdf, page: 1, quote: "Skid marks of 4.2 metres"}
+  - {q: "Which part of the car was damaged?", doc: 06_Mechanical_Inspection_Report.pdf, page: 1, quote: "front left bumper broken, left headlight broken"}
+  - {q: "Where was the eyewitness Anil standing according to the site plan?", doc: 07_Site_Plan_Sketch.png, page: 1, quote: "approx. 60 m north of X"}
+  - {q: "Who called the ambulance and when?", doc: 09_Ambulance_Call_Log.jpg, page: 1, quote: "Caller name given: Kavita Rao"}
+  - {q: "What does Lata Pawar say about who was driving?", doc: 03_Statement_Lata_Pawar_PW2_scanned.pdf, page: 1, quote: "A man was driving"}
+  - {q: "What is the registration number of the vehicle?", doc: 01_FIR_208-2026.pdf, page: 1, quote: "NV-01-CK-4521"}
+  - {q: "Were the brakes working?", doc: 06_Mechanical_Inspection_Report.pdf, page: 1, quote: "Brakes: working properly."}
+  - {q: "Who does the accused say was driving?", doc: 10_Client_Interview_Notes.txt, page: 1, quote: "Manoj Shinde"}
+  - {q: "When was the FIR registered?", doc: 01_FIR_208-2026.pdf, page: 1, quote: "02-05-2026 at 09:30 hrs"}
+
+unverified_sections: ["BNS 106(1) causing death by negligence", "BNS 281 rash driving on a public way"]

@@ -8,7 +8,7 @@ Upload the files of one criminal case (notes, PDFs, scanned statements, evidence
 
 Each case is stored in its own isolated folder and database. Models can run locally (Ollama) or in the cloud, chosen per role.
 
-Status: Stage 0 (foundation) done. See [docs/plan.md](docs/plan.md) for the staged build plan.
+Status: Stages 0–1 done (foundation, sample data). Two synthetic test cases with answer keys and scripted mock-trial rounds are in [samples/](samples/): upload the files in `samples/<case>/files/`. See [docs/plan.md](docs/plan.md) for the staged build plan.
 
 ## Run locally
 

@@ -8,6 +8,7 @@ Full staged plan: `docs/plan.md`. Decisions: `docs/adr/`.
 - Backend (from `backend/`): install `uv sync` · dev `uv run uvicorn app.main:app --reload --reload-dir app --port 8010` · lint `uv run ruff check . && uv run ruff format --check .` · types `uv run pyright` · tests `uv run pytest` (one file: `uv run pytest tests/test_x.py`)
 - Frontend (from `frontend/`): install `npm install` · dev `npm run dev` (:5173, proxies `/api` to :8010) · lint + types `npm run lint` · build `npm run build`
 - Contract: after changing any backend contract run `npm run gen:api` in `frontend/` and commit `src/api/schema.d.ts` (CI fails on drift).
+- Samples: `uv run --directory backend python ../samples/generate.py` (rebuild files from `case.yaml`) and `uv run --directory backend python ../samples/validate.py` (checks every answer-key ref). Edit `case.yaml`, never the generated files.
 - Tracing: `docker run -d -p 6006:6006 arizephoenix/phoenix` then open http://localhost:6006
 - Local LLM: Ollama at `http://localhost:11434/v1` (`qwen3.5:4b`, `nomic-embed-text`). Cloud: Gemini via `GEMINI_API_KEY` in `.env`; use `google:gemini-3.5-flash-lite` for dev/testing runs.
 
@@ -32,5 +33,6 @@ Full staged plan: `docs/plan.md`. Decisions: `docs/adr/`.
 
 ## Gotchas
 - Paths contain spaces (`mfird workshop/lawyer ai`): quote them in shell commands.
+- RapidOCR's call returns a union type: narrow with `isinstance(result, RapidOCROutput)` before reading `.txts/.boxes`.
 - RapidOCR prints INFO logs and downloads nothing at runtime (models ship in the wheel); first call is slow (~10 s warmup).
 - Local profile on this machine (CPU only) runs ~4 output tokens/s: fine for tests and witnesses, too slow for full-case analysis.

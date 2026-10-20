@@ -16,6 +16,8 @@ jobs:
       - run: uv run pyright
       # Tests never call a real LLM (pydantic-ai TestModel), so CI costs nothing.
       - run: uv run pytest
+      # Sample cases: every answer-key / trial-script ref must point at real text.
+      - run: uv run python ../samples/validate.py
 
   frontend:
     runs-on: ubuntu-latest

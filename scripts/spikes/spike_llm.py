@@ -77,8 +77,10 @@ async def main(model: str) -> None:
     embedder = Embedder(OpenAIEmbeddingModel("nomic-embed-text", provider=OllamaProvider()))
     t0 = time.perf_counter()
     emb = await embedder.embed_documents([STATEMENT, "red jacket"])
-    print(f"embeddings: {len(emb.embeddings)} x {len(emb.embeddings[0])} in "
-          f"{time.perf_counter() - t0:.1f}s")
+    print(
+        f"embeddings: {len(emb.embeddings)} x {len(emb.embeddings[0])} in "
+        f"{time.perf_counter() - t0:.1f}s"
+    )
 
     provider.force_flush()
 
