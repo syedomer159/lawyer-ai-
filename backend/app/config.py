@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     phoenix_endpoint: str = "http://localhost:6006/v1/traces"
     trace_content: bool = True
     cors_origins: list[str] = ["http://localhost:5173"]
+    embed_model: str = "nomic-embed-text"
+    max_upload_mb: int = 25
 
 
 settings = Settings()

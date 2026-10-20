@@ -71,7 +71,7 @@ lawyer-ai/
     tests/
   frontend/                     Vite + React + TS + Tailwind + TanStack Query + openapi-fetch
   samples/generate.py  samples/case1_*/  samples/case2_*/  (files + answer_key.yaml + trial_script.yaml)
-  evals/run.py metrics.py reports/
+  backend/evals/run.py reports/   (inside backend/ so it can import the app)
 ```
 
 ## Data model (per-case `case.db`)
@@ -161,5 +161,5 @@ Multi-user RBAC and firm-level tenancy, encryption at rest (SQLCipher — noted 
 2. `uv run python samples/generate.py && uv run python samples/validate.py`.
 3. `docker compose up` → open UI → create case → upload `samples/case1_*` → wait for ingest + analysis → check conflicts/arguments and click citations → run a mock-trial round → read debrief.
 4. Open Phoenix (`http://localhost:6006`) → see the analysis job and trial turns as traces with tokens per role.
-5. `uv run python -m evals.run --profile hybrid --case all` and `--profile local` → `evals/reports/<date>.md` with OCR accuracy, retrieval recall@5, contradiction P/R, gap recall, citation validity, trial rubric scores, tokens/cost/latency.
+5. From `backend/`: `uv run python -m evals.run --suite ingest` (Stage 2); later suites add `--profile hybrid|local` → `evals/reports/<date>.md` with OCR accuracy, retrieval recall@5, contradiction P/R, gap recall, citation validity, trial rubric scores, tokens/cost/latency.
 6. Isolation check: two cases loaded; assistant in case 2 asked about case 1's facts finds nothing.

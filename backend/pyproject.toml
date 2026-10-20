@@ -30,7 +30,7 @@ target-version = "py313"
 select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
 
 [tool.pyright]
-include = ["app", "tests"]
+include = ["app", "tests", "evals"]
 pythonVersion = "3.13"
 typeCheckingMode = "standard"
 venvPath = "."

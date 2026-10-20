@@ -1,0 +1,186 @@
+[
+  {
+    "case": "case1_state_v_arjun_verma",
+    "ocr_mean_similarity": 0.988,
+    "recall_at_5": 1.0,
+    "mrr": 0.9,
+    "quote_in_top_5": 1.0,
+    "ingest_seconds": 32.2,
+    "ocr": [
+      {
+        "doc": "04_Statement_Mohd_Irfan_PW3_scanned.pdf",
+        "page": 1,
+        "similarity": 1.0
+      },
+      {
+        "doc": "07_Affidavit_Suresh_Yadav_scanned.pdf",
+        "page": 1,
+        "similarity": 1.0
+      },
+      {
+        "doc": "08_CCTV_Still_CAM03.png",
+        "page": 1,
+        "similarity": 1.0
+      },
+      {
+        "doc": "09_Municipal_Letter_Streetlight.jpg",
+        "page": 1,
+        "similarity": 0.951
+      }
+    ],
+    "retrieval": [
+      {
+        "q": "What time does the CCTV still show?",
+        "expected": "08_CCTV_Still_CAM03.png p1",
+        "rank": 1,
+        "quote_in_top_k": true
+      },
+      {
+        "q": "When was the FIR registered?",
+        "expected": "01_FIR_112-2026.pdf p1",
+        "rank": 2,
+        "quote_in_top_k": true
+      },
+      {
+        "q": "Who were the panch witnesses to the recovery?",
+        "expected": "06_Disclosure_and_Recovery_Memo.pdf p1",
+        "rank": 1,
+        "quote_in_top_k": true
+      },
+      {
+        "q": "What did the doctor find on examining the complainant?",
+        "expected": "10_MLC_Report.pdf p1",
+        "rank": 1,
+        "quote_in_top_k": true
+      },
+      {
+        "q": "Where and when was the accused arrested?",
+        "expected": "05_Arrest_Memo.pdf p1",
+        "rank": 1,
+        "quote_in_top_k": true
+      },
+      {
+        "q": "Was the streetlight near the tea stall working?",
+        "expected": "09_Municipal_Letter_Streetlight.jpg p1",
+        "rank": 1,
+        "quote_in_top_k": true
+      },
+      {
+        "q": "What colour jacket did Ramesh Kumar describe?",
+        "expected": "03_Statement_Ramesh_Kumar_PW2.pdf p1",
+        "rank": 2,
+        "quote_in_top_k": true
+      },
+      {
+        "q": "What does the auto driver say about the lighting?",
+        "expected": "04_Statement_Mohd_Irfan_PW3_scanned.pdf p1",
+        "rank": 1,
+        "quote_in_top_k": true
+      },
+      {
+        "q": "What is the accused's alibi?",
+        "expected": "11_Client_Interview_Notes.txt p1",
+        "rank": 1,
+        "quote_in_top_k": true
+      },
+      {
+        "q": "What was the property stolen?",
+        "expected": "01_FIR_112-2026.pdf p2",
+        "rank": 1,
+        "quote_in_top_k": true
+      }
+    ]
+  },
+  {
+    "case": "case2_state_v_kavita_rao",
+    "ocr_mean_similarity": 0.988,
+    "recall_at_5": 1.0,
+    "mrr": 0.75,
+    "quote_in_top_5": 1.0,
+    "ingest_seconds": 25.7,
+    "ocr": [
+      {
+        "doc": "03_Statement_Lata_Pawar_PW2_scanned.pdf",
+        "page": 1,
+        "similarity": 1.0
+      },
+      {
+        "doc": "07_Site_Plan_Sketch.png",
+        "page": 1,
+        "similarity": 0.967
+      },
+      {
+        "doc": "08_Vehicle_Damage_Photo.jpg",
+        "page": 1,
+        "similarity": 1.0
+      },
+      {
+        "doc": "09_Ambulance_Call_Log.jpg",
+        "page": 1,
+        "similarity": 0.986
+      }
+    ],
+    "retrieval": [
+      {
+        "q": "What was the cause of death?",
+        "expected": "05_Post_Mortem_Report.pdf p1",
+        "rank": 1,
+        "quote_in_top_k": true
+      },
+      {
+        "q": "How long were the skid marks?",
+        "expected": "04_Statement_HC_Rahul_More_PW3.pdf p1",
+        "rank": 2,
+        "quote_in_top_k": true
+      },
+      {
+        "q": "Which part of the car was damaged?",
+        "expected": "06_Mechanical_Inspection_Report.pdf p1",
+        "rank": 2,
+        "quote_in_top_k": true
+      },
+      {
+        "q": "Where was the eyewitness Anil standing according to the site plan?",
+        "expected": "07_Site_Plan_Sketch.png p1",
+        "rank": 1,
+        "quote_in_top_k": true
+      },
+      {
+        "q": "Who called the ambulance and when?",
+        "expected": "09_Ambulance_Call_Log.jpg p1",
+        "rank": 1,
+        "quote_in_top_k": true
+      },
+      {
+        "q": "What does Lata Pawar say about who was driving?",
+        "expected": "03_Statement_Lata_Pawar_PW2_scanned.pdf p1",
+        "rank": 2,
+        "quote_in_top_k": true
+      },
+      {
+        "q": "What is the registration number of the vehicle?",
+        "expected": "01_FIR_208-2026.pdf p1",
+        "rank": 2,
+        "quote_in_top_k": true
+      },
+      {
+        "q": "Were the brakes working?",
+        "expected": "06_Mechanical_Inspection_Report.pdf p1",
+        "rank": 2,
+        "quote_in_top_k": true
+      },
+      {
+        "q": "Who does the accused say was driving?",
+        "expected": "10_Client_Interview_Notes.txt p1",
+        "rank": 1,
+        "quote_in_top_k": true
+      },
+      {
+        "q": "When was the FIR registered?",
+        "expected": "01_FIR_208-2026.pdf p1",
+        "rank": 1,
+        "quote_in_top_k": true
+      }
+    ]
+  }
+]

@@ -9,6 +9,7 @@ Full staged plan: `docs/plan.md`. Decisions: `docs/adr/`.
 - Frontend (from `frontend/`): install `npm install` · dev `npm run dev` (:5173, proxies `/api` to :8010) · lint + types `npm run lint` · build `npm run build`
 - Contract: after changing any backend contract run `npm run gen:api` in `frontend/` and commit `src/api/schema.d.ts` (CI fails on drift).
 - Samples: `uv run --directory backend python ../samples/generate.py` (rebuild files from `case.yaml`) and `uv run --directory backend python ../samples/validate.py` (checks every answer-key ref). Edit `case.yaml`, never the generated files.
+- Evals (from `backend/`, needs Ollama): `uv run python -m evals.run --suite ingest` -> `backend/evals/reports/`. Not in CI.
 - Tracing: `docker run -d -p 6006:6006 arizephoenix/phoenix` then open http://localhost:6006
 - Local LLM: Ollama at `http://localhost:11434/v1` (`qwen3.5:4b`, `nomic-embed-text`). Cloud: Gemini via `GEMINI_API_KEY` in `.env`; use `google:gemini-3.5-flash-lite` for dev/testing runs.
 
@@ -29,7 +30,7 @@ Full staged plan: `docs/plan.md`. Decisions: `docs/adr/`.
 
 ## Testing
 - pytest in `backend/tests/`. Tests never call a real LLM: use pydantic-ai `TestModel`/`FunctionModel`. Must test: case isolation, citation validation, phase transitions.
-- LLM quality is measured by `evals/` against `samples/*/answer_key.yaml`, run manually per profile, not in CI.
+- LLM quality is measured by `backend/evals/` against `samples/*/answer_key.yaml`, run manually per profile, not in CI.
 
 ## Gotchas
 - Paths contain spaces (`mfird workshop/lawyer ai`): quote them in shell commands.

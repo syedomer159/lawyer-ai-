@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.routing import APIRoute
 
+from app.api import cases, documents
 from app.config import settings
 from app.contracts import HealthResponse
 
@@ -18,6 +19,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.include_router(cases.router)
+app.include_router(documents.router)
 
 
 @app.get("/api/health")
