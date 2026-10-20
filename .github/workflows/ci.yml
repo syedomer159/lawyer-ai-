@@ -1,0 +1,31 @@
+name: ci
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: backend } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --locked
+      - run: uv run ruff check . && uv run ruff format --check .
+      - run: uv run pyright
+      # Tests never call a real LLM (pydantic-ai TestModel), so CI costs nothing.
+      - run: uv run pytest
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: frontend/package-lock.json }
+      - run: cd backend && uv sync --locked
+      - run: cd frontend && npm ci
+      # Contract drift check: generated types must match the backend's current OpenAPI schema.
+      - run: cd frontend && npm run gen:api && git diff --exit-code src/api/schema.d.ts
+      - run: cd frontend && npm run lint && npm run build

@@ -1,0 +1,21 @@
+# secrets
+.env
+.env.*
+!.env.example
+
+# case data is confidential: never commit it
+data/
+
+# python
+__pycache__/
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# node
+node_modules/
+dist/
+frontend/openapi.json
+
+# throwaway spike output
+scripts/spikes/out/

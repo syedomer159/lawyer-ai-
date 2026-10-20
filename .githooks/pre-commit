@@ -1,0 +1,11 @@
+#!/bin/sh
+# Fast checks on staged files only. Full lint/typecheck/tests run in CI.
+set -e
+py=$(git diff --cached --name-only --diff-filter=ACM -- 'backend/*.py' | sed 's#^backend/##')
+if [ -n "$py" ]; then
+  (cd backend && uv run ruff check $py && uv run ruff format --check $py)
+fi
+ts=$(git diff --cached --name-only --diff-filter=ACM -- 'frontend/src/*.ts' 'frontend/src/*.tsx' | sed 's#^frontend/##')
+if [ -n "$ts" ]; then
+  (cd frontend && npx --no-install eslint $ts)
+fi
