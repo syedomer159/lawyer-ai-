@@ -1,6 +1,12 @@
 # Handoff — Lawyer AI case prep
 
-Snapshot: 2026-10-21 · last commit `13fbc97` · backend tests 52 passing · Stages 0–6 done, Stage 7 not started.
+| Version | Updated | Describes commit | Written by | Status |
+|---|---|---|---|---|
+| 1 | 2026-10-21 | `13fbc97` | Claude Code session `local_25698c00-0c6e-4fa3-8830-aaa4313d2078` (Stages 0–6 build) | Stages 0–6 done, Stage 7 not started · 52 backend tests passing |
+
+> Living document: update this file in place (bump the version, set the commit) at the start and end of every stage. If the commit above is older than `git log -1`, check the status sections against the code before trusting them. Rules: `CLAUDE.md` → "Session handoff".
+
+Change log: v1 (2026-10-21) first handoff after Stages 0–6 and key rotation.
 
 Read first: [README](../README.md) (run it), [CLAUDE.md](../CLAUDE.md) (rules for working in the repo), [plan](plan.md) (original staged plan), [design](design.md) (requirements, cost, agents), [ADRs](adr/) (decisions, with implementation notes per stage).
 

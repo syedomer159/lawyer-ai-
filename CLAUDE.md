@@ -4,6 +4,12 @@ Helps a lawyer prepare ONE criminal case at a time (Indian BNS/BNSS procedure): 
 
 Full staged plan: `docs/plan.md`. Decisions: `docs/adr/`.
 
+## Session handoff (read first)
+- **Start every session by reading `docs/HANDOFF.md`**: current status, what was left out, the remaining plan and the manual test checklist.
+- It is ONE living file: update it in place, never create a second handoff. Its header records version, date, the commit it describes, and the session that wrote it.
+- Stale check: if the header's commit is older than `git log -1`, verify the status sections against the code and git log before relying on them.
+- When a stage starts, mark it "in progress" in the handoff; when it ends, update status, gaps and remaining plan, bump the version, set the commit, and commit the handoff with the work. Remove items that are done instead of leaving them ticked forever.
+
 ## Commands
 - Backend (from `backend/`): install `uv sync` · dev `uv run uvicorn app.main:app --reload --reload-dir app --port 8010` · lint `uv run ruff check . && uv run ruff format --check .` · types `uv run pyright` · tests `uv run pytest` (one file: `uv run pytest tests/test_x.py`)
 - Frontend (from `frontend/`): install `npm install` · dev `npm run dev` (:5173, proxies `/api` to :8010) · lint + types `npm run lint` · build `npm run build`
