@@ -38,7 +38,7 @@ log = logging.getLogger(__name__)
 _TITLES = re.compile(r"^(smt|shri|sri|mr|mrs|ms|dr|si|asi|hc|head constable|constable)\.?\s+")
 
 
-def _party_key(name: str) -> str:
+def party_key(name: str) -> str:
     key = re.sub(r"[^\w\s]", " ", name.lower()).strip()
     while (stripped := _TITLES.sub("", key)) != key:
         key = stripped
@@ -49,7 +49,7 @@ def merge_parties(extractions: list[Extraction]) -> list[tuple[str, PartyRole]]:
     """One entry per person across documents; a specific role beats 'other'."""
     merged: dict[str, tuple[str, PartyRole]] = {}
     for p in (p for e in extractions for p in e.parties):
-        key = _party_key(p.name)
+        key = party_key(p.name)
         if key and (key not in merged or merged[key][1] == "other"):
             merged[key] = (p.name, p.role)
     return list(merged.values())

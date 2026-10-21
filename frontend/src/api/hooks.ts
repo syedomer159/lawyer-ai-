@@ -147,3 +147,92 @@ export function useSetConflictStatus(caseId: string) {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['analysis', caseId] }),
   })
 }
+
+// --- mock trial ---------------------------------------------------------------------------
+
+export type TrialSessionData = NonNullable<ReturnType<typeof useTrialSession>['data']>
+export type TrialWitnessInput = { name: string; role: TrialSessionData['witnesses'][number]['role']; demeanour: 'cooperative' | 'nervous' | 'hostile' }
+
+export function useTrialWitnesses(caseId: string) {
+  return useQuery({
+    queryKey: ['trial-witnesses', caseId],
+    queryFn: async () =>
+      unwrap(await api.GET('/api/cases/{case_id}/trial/witnesses', { params: { path: { case_id: caseId } } })),
+  })
+}
+
+export function useTrialSessions(caseId: string) {
+  return useQuery({
+    queryKey: ['trial-sessions', caseId],
+    queryFn: async () =>
+      unwrap(await api.GET('/api/cases/{case_id}/trial/sessions', { params: { path: { case_id: caseId } } })),
+  })
+}
+
+export function useTrialSession(caseId: string, sessionId: string | null) {
+  return useQuery({
+    queryKey: ['trial-session', caseId, sessionId],
+    enabled: sessionId !== null,
+    queryFn: async () =>
+      unwrap(
+        await api.GET('/api/cases/{case_id}/trial/sessions/{session_id}', {
+          params: { path: { case_id: caseId, session_id: sessionId ?? '' } },
+        }),
+      ),
+  })
+}
+
+/** Every trial action returns the updated session; put it straight into the cache. */
+function useTrialAction<Vars>(caseId: string, run: (vars: Vars) => Promise<TrialSessionData>) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: run,
+    onSuccess: (session) => {
+      qc.setQueryData(['trial-session', caseId, session.id], session)
+      qc.invalidateQueries({ queryKey: ['trial-sessions', caseId] })
+      qc.invalidateQueries({ queryKey: ['usage', caseId] })
+    },
+  })
+}
+
+export function useStartTrial(caseId: string) {
+  return useTrialAction(caseId, async (witnesses: TrialWitnessInput[]) =>
+    unwrap(
+      await api.POST('/api/cases/{case_id}/trial/sessions', {
+        params: { path: { case_id: caseId } },
+        body: { witnesses },
+      }),
+    ),
+  )
+}
+
+export function useTrialTurn(caseId: string, sessionId: string) {
+  return useTrialAction(caseId, async (body: { kind: 'question' | 'argument' | 'objection'; text: string }) =>
+    unwrap(
+      await api.POST('/api/cases/{case_id}/trial/sessions/{session_id}/turns', {
+        params: { path: { case_id: caseId, session_id: sessionId } },
+        body,
+      }),
+    ),
+  )
+}
+
+export function useTrialAdvance(caseId: string, sessionId: string) {
+  return useTrialAction(caseId, async () =>
+    unwrap(
+      await api.POST('/api/cases/{case_id}/trial/sessions/{session_id}/advance', {
+        params: { path: { case_id: caseId, session_id: sessionId } },
+      }),
+    ),
+  )
+}
+
+export function useTrialDebrief(caseId: string, sessionId: string) {
+  return useTrialAction(caseId, async () =>
+    unwrap(
+      await api.POST('/api/cases/{case_id}/trial/sessions/{session_id}/debrief', {
+        params: { path: { case_id: caseId, session_id: sessionId } },
+      }),
+    ),
+  )
+}

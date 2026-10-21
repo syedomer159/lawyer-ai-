@@ -34,6 +34,7 @@ from app.contracts.documents import (
     PageDetail,
     SourceRef,
 )
+from app.contracts.trial import SPEAKERS, TRIAL_PHASES, TURN_KINDS
 from app.contracts.usage import RoleUsage, UsageSummary
 
 
@@ -148,6 +149,28 @@ MIGRATIONS = [
         rebuttal TEXT NOT NULL,
         cross_questions TEXT NOT NULL,
         citations TEXT NOT NULL
+    );
+    """,
+    # v4: mock trial sessions and their transcript (Stage 5).
+    f"""
+    CREATE TABLE trial_sessions (
+        id TEXT PRIMARY KEY,
+        created_at TEXT NOT NULL,
+        user_side TEXT NOT NULL,
+        phase TEXT NOT NULL CHECK (phase IN ({_in(TRIAL_PHASES)})),
+        witness_index INTEGER NOT NULL,
+        witnesses TEXT NOT NULL,
+        debrief TEXT
+    );
+    CREATE TABLE trial_turns (
+        id INTEGER PRIMARY KEY,
+        session_id TEXT NOT NULL REFERENCES trial_sessions(id),
+        phase TEXT NOT NULL CHECK (phase IN ({_in(TRIAL_PHASES)})),
+        speaker TEXT NOT NULL CHECK (speaker IN ({_in(SPEAKERS)})),
+        speaker_name TEXT NOT NULL,
+        kind TEXT NOT NULL CHECK (kind IN ({_in(TURN_KINDS)})),
+        text TEXT NOT NULL,
+        struck INTEGER NOT NULL DEFAULT 0
     );
     """,
 ]
@@ -347,6 +370,12 @@ class CaseStore:
             cost_usd=sum(r.cost_usd for r in by_role),
             by_role=by_role,
         )
+
+    def doc_text(self, doc_id: str) -> str:
+        rows = self.db.execute(
+            "SELECT text FROM pages WHERE doc_id = ? ORDER BY page_no", (doc_id,)
+        ).fetchall()
+        return "\n".join(r[0] for r in rows)
 
     def doc_chunks(self, doc_id: str) -> list[tuple[int, int, str]]:
         """(chunk_id, page, text) for one document, in reading order."""

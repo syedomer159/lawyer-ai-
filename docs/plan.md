@@ -127,7 +127,7 @@ Sub-steps, each its own agent file with a typed output model:
 - Evals: contradiction precision/recall vs answer key (match by source refs, LLM-judge fallback for wording), gap recall, citation validity %, cost and latency per profile.
 - **Exit:** both sample cases analysed end-to-end from the UI; eval report per profile (target on `hybrid`: contradiction recall ≥ 0.7, citation validity ≥ 0.95; `local` baseline recorded honestly).
 
-### Stage 5 — Mock trial (multi-agent role-play)
+### Stage 5 — Mock trial (multi-agent role-play) — DONE (see ADR-0003 notes)
 - Session setup: user side (defence default), pick witnesses from extracted parties, demeanour per witness (cooperative / nervous / hostile).
 - `phases.py` state machine (simplified sessions trial): `charge → prosecution opening → per witness [examination-in-chief → cross-examination → re-examination] → defence evidence (optional) → final arguments → judge observations → debrief`. Symmetric "examining side / cross side" so user can also play prosecution. "Skip to phase" to save time/cost.
 - Turn loop: user message → (cheap) opposing-counsel `ObjectionDecision` → judge rules if objected → addressed agent replies → turn stored with citations. User can also object; judge rules with reason.

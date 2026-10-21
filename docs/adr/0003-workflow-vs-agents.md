@@ -18,6 +18,12 @@
 - Domain knowledge lives in `app/legal_refs/*.yaml` (elements per BNS section, procedure checklist), each marked verified or not, rather than in model memory.
 - Resilience: Gemini calls retry 429/5xx with backoff (SDK `retry_options`). Heavy roles use a fallback chain (Flash → Flash Lite) via `FallbackModel`, and the usage row records the model that actually answered. The first real eval run hit Gemini 503 "high demand", which is how this was found (via the error span in Phoenix).
 
+## Stage 5 implementation notes
+- `app/agents/trial/phases.py` is a pure state machine: opening → (examination-in-chief → cross-examination) per prosecution witness → final arguments → judge's observations → closed. Prosecution examines in chief, defence cross-examines; the AI counsel plays whichever side the lawyer is not on.
+- `orchestrator.py` runs the AI side until the lawyer must act (AI examinations are 2 questions per witness to keep a demo short and cheap). Lawyer questions first go to an objection check by AI counsel; if it objects, the judge rules, and a sustained objection strikes the question. The lawyer can object to AI counsel; a sustained objection strikes that turn and the answer it drew.
+- Knowledge scoping (`roles.py`): a witness/IO gets only their own documents (documents where the analysis found them speaking, else documents naming them in full) and their own examination; the judge gets the transcript only; AI counsel gets the analysis brief + transcript. Every call carries `session.id`.
+- Witness and objection turns run synchronously inside the request (a few model calls, ~5-30 s on cloud). A streaming UI is a later improvement.
+
 ## Consequences
 - Each step can be tested and evaluated on its own, and cost per case is predictable.
 - Changing trial procedure means changing code, not prompts.

@@ -3,6 +3,7 @@ import { useParams } from 'react-router'
 import type { BBox, Document } from '../api/client'
 import { useCase, useDocuments, useUsage } from '../api/hooks'
 import AnalysisPanel from '../components/AnalysisPanel'
+import CourtroomPanel from '../components/CourtroomPanel'
 import ArgumentsPanel from '../components/ArgumentsPanel'
 import DocumentPanel from '../components/DocumentPanel'
 import PageViewer from '../components/PageViewer'
@@ -11,7 +12,7 @@ import SearchPanel from '../components/SearchPanel'
 /** What the viewer shows: a page, optionally with one cited region highlighted. */
 export type Selection = { docId: string; page: number; chunkId?: number; bbox?: BBox | null }
 
-const TABS = ['Documents', 'Analysis', 'Arguments'] as const
+const TABS = ['Documents', 'Analysis', 'Arguments', 'Courtroom'] as const
 type Tab = (typeof TABS)[number]
 
 export default function CaseWorkspace() {
@@ -61,6 +62,7 @@ export default function CaseWorkspace() {
         )}
         {tab === 'Analysis' && <AnalysisPanel caseId={caseId} onOpen={setSelection} />}
         {tab === 'Arguments' && <ArgumentsPanel caseId={caseId} onOpen={setSelection} />}
+        {tab === 'Courtroom' && <CourtroomPanel caseId={caseId} />}
       </section>
       <section className="min-w-0 lg:sticky lg:top-4 lg:self-start">
         {selection && selectedDoc ? (

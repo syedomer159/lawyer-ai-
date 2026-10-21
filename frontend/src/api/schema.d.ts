@@ -165,6 +165,115 @@ export interface paths {
         patch: operations["update_conflict"];
         trace?: never;
     };
+    "/api/cases/{case_id}/trial/witnesses": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Witnesses
+         * @description People from the case analysis who can be called to give evidence (not the accused).
+         */
+        get: operations["list_witnesses"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/cases/{case_id}/trial/sessions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Sessions */
+        get: operations["list_sessions"];
+        put?: never;
+        /**
+         * Start Session
+         * @description Opens the trial and runs the AI side until the lawyer must act (a few model calls).
+         */
+        post: operations["start_session"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/cases/{case_id}/trial/sessions/{session_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Session */
+        get: operations["get_session"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/cases/{case_id}/trial/sessions/{session_id}/turns": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post Turn */
+        post: operations["post_turn"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/cases/{case_id}/trial/sessions/{session_id}/advance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Advance */
+        post: operations["advance"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/cases/{case_id}/trial/sessions/{session_id}/debrief": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Debrief */
+        post: operations["debrief"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/health": {
         parameters: {
             query?: never;
@@ -360,6 +469,19 @@ export interface components {
             /** Question */
             question: string;
         };
+        /** Debrief */
+        Debrief: {
+            /** Score */
+            score: number;
+            /** Summary */
+            summary: string;
+            /** Strengths */
+            strengths: string[];
+            /** Missed */
+            missed: string[];
+            /** Better Questions */
+            better_questions: components["schemas"]["CrossQuestion"][];
+        };
         /** Document */
         Document: {
             /** Id */
@@ -504,6 +626,93 @@ export interface components {
                 number
             ] | null;
         };
+        /** TrialCreate */
+        TrialCreate: {
+            /** Witnesses */
+            witnesses: components["schemas"]["TrialWitness"][];
+        };
+        /** TrialSession */
+        TrialSession: {
+            /** Id */
+            id: string;
+            /**
+             * User Side
+             * @enum {string}
+             */
+            user_side: "defence" | "prosecution";
+            /**
+             * Phase
+             * @enum {string}
+             */
+            phase: "opening" | "chief" | "cross" | "final" | "judgment" | "closed";
+            /** Witnesses */
+            witnesses: components["schemas"]["TrialWitness"][];
+            /** Witness Index */
+            witness_index: number;
+            /** Awaiting User */
+            awaiting_user: boolean;
+            /** Hint */
+            hint: string;
+            /** Turns */
+            turns: components["schemas"]["TrialTurn"][];
+            debrief: components["schemas"]["Debrief"] | null;
+        };
+        /** TrialSessionSummary */
+        TrialSessionSummary: {
+            /** Id */
+            id: string;
+            /** Created At */
+            created_at: string;
+            /**
+             * Phase
+             * @enum {string}
+             */
+            phase: "opening" | "chief" | "cross" | "final" | "judgment" | "closed";
+            /** Witnesses */
+            witnesses: string[];
+        };
+        /** TrialTurn */
+        TrialTurn: {
+            /** Id */
+            id: number;
+            /**
+             * Phase
+             * @enum {string}
+             */
+            phase: "opening" | "chief" | "cross" | "final" | "judgment" | "closed";
+            /**
+             * Speaker
+             * @enum {string}
+             */
+            speaker: "judge" | "user" | "counsel" | "witness";
+            /** Speaker Name */
+            speaker_name: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "statement" | "question" | "answer" | "objection" | "ruling" | "argument";
+            /** Text */
+            text: string;
+            /** Struck */
+            struck: boolean;
+        };
+        /** TrialWitness */
+        TrialWitness: {
+            /** Name */
+            name: string;
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "accused" | "complainant" | "witness" | "io" | "police" | "doctor" | "panch" | "other";
+            /**
+             * Demeanour
+             * @default cooperative
+             * @enum {string}
+             */
+            demeanour: "cooperative" | "nervous" | "hostile";
+        };
         /** UsageSummary */
         UsageSummary: {
             /** Calls */
@@ -516,6 +725,16 @@ export interface components {
             cost_usd: number;
             /** By Role */
             by_role: components["schemas"]["RoleUsage"][];
+        };
+        /** UserTurn */
+        UserTurn: {
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "question" | "argument" | "objection";
+            /** Text */
+            text: string;
         };
         /** ValidationError */
         ValidationError: {
@@ -931,6 +1150,235 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_witnesses: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Party"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_sessions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TrialSessionSummary"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    start_session: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TrialCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TrialSession"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_session: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: string;
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TrialSession"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    post_turn: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: string;
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserTurn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TrialSession"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    advance: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: string;
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TrialSession"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    debrief: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: string;
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TrialSession"];
+                };
             };
             /** @description Validation Error */
             422: {
