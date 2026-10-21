@@ -24,6 +24,8 @@ class Settings(BaseSettings):
     gemini_api_key: SecretStr | None = Field(
         default=None, validation_alias=AliasChoices("GEMINI_API_KEY", "GOOGLE_API_KEY")
     )
+    # Several Gemini keys, comma-separated, used in rotation (app/llm/keys.py).
+    gemini_api_keys: SecretStr | None = None
     anthropic_api_key: SecretStr | None = None
     openai_api_key: SecretStr | None = None
     tracing: bool = True  # TRACING=false turns off export (tests)
@@ -32,6 +34,12 @@ class Settings(BaseSettings):
     cors_origins: list[str] = ["http://localhost:5173"]
     embed_model: str = "nomic-embed-text"
     max_upload_mb: int = 25
+
+    def gemini_keys(self) -> list[str]:
+        """All Gemini keys: GEMINI_API_KEYS (comma-separated) then GEMINI_API_KEY, de-duplicated."""
+        many = self.gemini_api_keys.get_secret_value().split(",") if self.gemini_api_keys else []
+        one = [self.gemini_api_key.get_secret_value()] if self.gemini_api_key else []
+        return list(dict.fromkeys(k.strip() for k in [*many, *one] if k.strip()))
 
 
 settings = Settings()

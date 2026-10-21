@@ -25,6 +25,13 @@ The app must run on local Ollama (free, private, slow on this CPU-only laptop) o
 - `config/models.yaml` is validated on load: unknown roles or profiles fail, and the `local` profile may contain only offline models (`ollama:*`, or `test` in tests).
 - Tests use the offline `test` model via a test `models.yaml`, with no model overrides.
 
+## Gemini key rotation
+- `GEMINI_API_KEYS` (comma-separated) feeds a key pool (`app/llm/keys.py`). `run_role` leases a key per Gemini model per call; on a key-caused failure it marks the key and retries with the next one: invalid/expired (400/401/403 with an API-key reason) → disabled; 429 RESOURCE_EXHAUSTED → parked for that model until Google's RetryInfo delay (else midnight Pacific for daily quotas, else 60 s). If every key is parked but one resets within 60 s, it waits; otherwise it fails with `NoGeminiKey` naming the reset time.
+- 429 is no longer retried inside the Gemini SDK (pointless for a daily quota); 5xx still is.
+- Status is persisted in `data/gemini_keys.json` by fingerprint (hash + last 4 chars), never the key.
+- `python -m app.llm.keys --check [--all-in-env] [--prune-env]` tests each key and can rewrite `.env` keeping only valid keys (backup `.env.bak`).
+- Caveat: quotas are per Google Cloud project, so keys from one project share a quota; multiplying free-tier quota across projects may breach Google's terms. Rotation is for failover between keys you are entitled to use.
+
 ## Consequences
 - Switching provider is a config change. Quality and cost differences are measured by evals per profile.
 - We depend on a fast-moving library (v2.x), so it is pinned in `uv.lock`.

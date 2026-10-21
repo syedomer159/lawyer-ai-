@@ -12,6 +12,7 @@ Full staged plan: `docs/plan.md`. Decisions: `docs/adr/`.
 - Smoke (real models + Phoenix): `uv run python -m evals.smoke --profile cloud local` from `backend/`.
 - Evals (from `backend/`, needs Ollama): `uv run python -m evals.run --suite ingest`, and `--suite analysis --profile cloud` and `--suite trial --profile cloud` (real Gemini calls, a few cents each) -> `backend/evals/reports/`. Not in CI.
 - Tracing: `docker run -d -p 6006:6006 arizephoenix/phoenix` then open http://localhost:6006
+- Gemini keys: `uv run python -m app.llm.keys --check` (status of every key; `--prune-env` drops invalid ones from `.env`).
 - Local LLM: Ollama at `http://localhost:11434/v1` (`qwen3.5:4b`, `nomic-embed-text`). Cloud: Gemini via `GEMINI_API_KEY` in `.env`; use `google:gemini-3.5-flash-lite` for dev/testing runs.
 
 ## Architecture

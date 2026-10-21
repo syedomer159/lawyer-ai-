@@ -11,7 +11,7 @@ from google.genai.types import HttpRetryOptions
 from pydantic import BaseModel, SecretStr
 from pydantic_ai import Agent, ModelRetry, NativeOutput, RunContext
 from pydantic_ai.agent import AgentRunResult
-from pydantic_ai.exceptions import ModelAPIError, ModelHTTPError
+from pydantic_ai.exceptions import FallbackExceptionGroup, ModelAPIError, ModelHTTPError
 from pydantic_ai.models import Model
 from pydantic_ai.models.anthropic import AnthropicModel
 from pydantic_ai.models.fallback import FallbackModel
@@ -25,6 +25,7 @@ from pydantic_ai.providers.openai import OpenAIProvider
 
 from app.config import Settings
 from app.contracts.cases import Case
+from app.llm.keys import KeyPool, NoGeminiKey, get_pool
 from app.llm.prompts import Prompt
 from app.llm.registry import Role, resolve
 from app.observability import tracer
@@ -68,22 +69,34 @@ async def run_role(
     flag what is still wrong (unverified citations) instead of failing the whole run."""
     rm = resolve(role, case, settings.model_profile, settings.models_config)
     structured = output_type is not str
-    agent = Agent(
-        build_chain(rm.models, settings),
-        output_type=NativeOutput(output_type) if rm.native_output and structured else output_type,
-        instructions=prompt.render(**(prompt_vars or {})),
-        model_settings=rm.settings,
-        name=role,
-        tools=list(tools),  # read-only functions bound to this case's store (case assistant)
-    )
-    if check is not None:
+    pool = get_pool(tuple(settings.gemini_keys()), settings.data_dir / "gemini_keys.json")
 
-        @agent.output_validator
-        def _validate(ctx: RunContext[object], output: BaseModel | str) -> BaseModel | str:
-            problems = check(output)
-            if problems and ctx.retry == 0:
-                raise ModelRetry("Fix these problems:\n- " + "\n- ".join(problems[:15]))
-            return output
+    async def make_agent(leases: dict[str, str]) -> Agent[object, BaseModel | str]:
+        leases.clear()  # Gemini model name -> key used for this attempt
+        for m in rm.models:
+            if m.startswith("google:"):
+                leases[m.partition(":")[2]] = await pool.acquire(m.partition(":")[2])
+        agent = Agent(
+            build_chain(rm.models, settings, leases),
+            output_type=NativeOutput(output_type)
+            if rm.native_output and structured
+            else output_type,
+            instructions=prompt.render(**(prompt_vars or {})),
+            model_settings=rm.settings,
+            name=role,
+            tools=list(tools),  # read-only functions bound to this case's store (case assistant)
+        )
+        if check is not None:
+            find_problems = check  # bound here so the closure keeps the narrowed (non-None) type
+
+            @agent.output_validator
+            def _validate(ctx: RunContext[object], output: BaseModel | str) -> BaseModel | str:
+                problems = find_problems(output)
+                if problems and ctx.retry == 0:
+                    raise ModelRetry("Fix these problems:\n- " + "\n- ".join(problems[:15]))
+                return output
+
+        return agent
 
     attributes = {
         "case.id": case.id,
@@ -97,7 +110,7 @@ async def run_role(
     }
     with tracer.start_as_current_span(f"role.{role}", attributes=attributes) as span:
         t0 = time.perf_counter()
-        result = await _run_with_transport_retry(agent, user_prompt)
+        result = await _run_rotating_keys(make_agent, pool, user_prompt)
         latency_ms = round((time.perf_counter() - t0) * 1000)
         usage = result.usage
         used = _answering_model(rm.models, result.response.model_name)
@@ -131,6 +144,28 @@ def _key(secret: SecretStr | None) -> str | None:
 TRANSPORT_ATTEMPTS = 3
 
 
+async def _run_rotating_keys(
+    make_agent: Callable[[dict[str, str]], Awaitable[Agent[object, BaseModel | str]]],
+    pool: KeyPool,
+    user_prompt: str,
+) -> AgentRunResult[BaseModel | str]:
+    """Run; if a Gemini key was the cause (invalid, or out of quota), mark it and try again with
+    the next key. Ends when a run succeeds, or acquire() finds no usable key (NoGeminiKey)."""
+    leases: dict[str, str] = {}
+    for _ in range(len(pool.keys) + 1):
+        agent = await make_agent(leases)
+        try:
+            result = await _run_with_transport_retry(agent, user_prompt)
+        except (ModelHTTPError, FallbackExceptionGroup) as exc:
+            if not pool.report_run_failure(exc, leases):
+                raise
+            continue
+        for key in set(leases.values()):
+            pool.mark_ok(key)
+        return result
+    raise NoGeminiKey("every Gemini key failed for this call")
+
+
 async def _run_with_transport_retry[T](agent: Agent[Any, T], user_prompt: str) -> AgentRunResult[T]:
     """Retry calls that never got an HTTP response (connect/read timeouts, dropped connections).
     HTTP errors are not retried here: the provider SDKs already retried 429/5xx with backoff."""
@@ -144,16 +179,18 @@ async def _run_with_transport_retry[T](agent: Agent[Any, T], user_prompt: str) -
     raise AssertionError("unreachable")
 
 
-# Transient provider errors (rate limit, "model overloaded") are retried with backoff by the
-# Gemini SDK itself; the OpenAI and Anthropic SDKs retry these by default.
+# Transient server errors ("model overloaded") are retried with backoff by the Gemini SDK itself.
+# 429 (quota) is NOT retried there: the key pool parks that key and rotates to the next one.
 GEMINI_RETRY = HttpRetryOptions(
-    attempts=4, initial_delay=2, max_delay=30, http_status_codes=[429, 500, 502, 503, 504]
+    attempts=4, initial_delay=2, max_delay=30, http_status_codes=[500, 502, 503, 504]
 )
 
 
-def build_chain(models: tuple[str, ...], settings: Settings) -> Model | str:
+def build_chain(
+    models: tuple[str, ...], settings: Settings, leases: dict[str, str] | None = None
+) -> Model | str:
     """One model, or a FallbackModel that moves to the next one if a call still fails."""
-    built = [build_model(m, settings) for m in models]
+    built = [build_model(m, settings, leases) for m in models]
     return built[0] if len(built) == 1 else FallbackModel(*built)
 
 
@@ -167,7 +204,9 @@ def _answering_model(models: tuple[str, ...], response_model: str | None) -> str
     return models[0]
 
 
-def build_model(model: str, settings: Settings) -> Model | str:
+def build_model(
+    model: str, settings: Settings, leases: dict[str, str] | None = None
+) -> Model | str:
     """Give each provider its URL/key from Settings (i.e. from .env). A bare model string would
     make pydantic-ai read only process env vars, so keys in .env would be silently ignored."""
     provider_name, _, name = model.partition(":")
@@ -175,7 +214,8 @@ def build_model(model: str, settings: Settings) -> Model | str:
         case "ollama":
             return OllamaModel(name, provider=OllamaProvider(base_url=settings.ollama_base_url))
         case "google":
-            key = _key(settings.gemini_api_key)
+            # The key comes from the rotating pool (leases); without one, the first configured key.
+            key = (leases or {}).get(name) or next(iter(settings.gemini_keys()), None)
             return GoogleModel(
                 name, provider=GoogleProvider(api_key=key, retry_options=GEMINI_RETRY)
             )
