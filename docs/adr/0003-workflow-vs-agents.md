@@ -24,6 +24,11 @@
 - Knowledge scoping (`roles.py`): a witness/IO gets only their own documents (documents where the analysis found them speaking, else documents naming them in full) and their own examination; the judge gets the transcript only; AI counsel gets the analysis brief + transcript. Every call carries `session.id`.
 - Witness and objection turns run synchronously inside the request (a few model calls, ~5-30 s on cloud). A streaming UI is a later improvement.
 
+## Stage 6 implementation notes
+- The case assistant (`app/agents/assistant.py`) is the only free tool-calling agent. `run_role(tools=...)` gets five read-only closures over ONE case's store: `search_case` (hybrid search), `list_contradictions`, `list_gaps`, `list_arguments`, `timeline`. Each returns `[chunk N]` markers so the answer can cite them; citations get one corrective retry, then are checked in code. Citations to chunks that don't exist in this case are dropped.
+- Conversation is stored per case (schema v5); the last 6 messages go to the model as context for follow-ups.
+- Shown as an "Ask" tab rather than a side panel on every tab (simpler for the MVP).
+
 ## Consequences
 - Each step can be tested and evaluated on its own, and cost per case is predictable.
 - Changing trial procedure means changing code, not prompts.

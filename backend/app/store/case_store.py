@@ -173,6 +173,15 @@ MIGRATIONS = [
         struck INTEGER NOT NULL DEFAULT 0
     );
     """,
+    # v5: case assistant chat (Stage 6).
+    """
+    CREATE TABLE assistant_messages (
+        id INTEGER PRIMARY KEY,
+        role TEXT NOT NULL CHECK (role IN ('user', 'assistant')),
+        text TEXT NOT NULL,
+        citations TEXT NOT NULL
+    );
+    """,
 ]
 
 

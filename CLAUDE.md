@@ -26,6 +26,7 @@ Full staged plan: `docs/plan.md`. Decisions: `docs/adr/`.
 - **Every LLM call goes through `app/llm/runner.py:run_role(role, ...)`**: it picks the model from `config/models.yaml` (role + profile, default `cloud`), traces it, and writes an `llm_calls` row. Never construct an `Agent` with a model string elsewhere. `local_only` cases are forced onto Ollama.
 - Analysis agents (`app/agents/`) take an `AnalysisRun` and call `run.call(role, prompt, ...)`. Cite as `Citation{chunk_id, quote}` and pass `check=` so bad quotes get one retry; store `CheckedCitation`s. Charge elements and the procedure checklist live in `app/legal_refs/*.yaml`.
 - Mock trial: procedure is code (`app/agents/trial/phases.py`); add a phase there, not in a prompt. Each role's context is built in `roles.py`: never give a witness documents beyond its own.
+- Case assistant tools are read-only closures over one store (`app/agents/assistant.py:case_tools`); pass them via `run_role(tools=...)`. Never give a tool access to the registry or another case.
 - Prompts live in `app/prompts/<name>.md` (`$var` placeholders), loaded with `load_prompt`; their hash is the prompt version on spans and usage rows.
 - Ollama `qwen3.5:4b` is a thinking model: always send `openai_reasoning_effort: "none"` for it, or calls take 10+ minutes on CPU. Ollama default context is 4096 tokens.
 - Use `NativeOutput(...)` for Ollama structured output (grammar-constrained); default tool output for cloud models.

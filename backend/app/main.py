@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.routing import APIRoute
 
-from app.api import analysis, cases, documents, trial, usage
+from app.api import analysis, assistant, cases, documents, trial, usage
 from app.config import settings
 from app.contracts import HealthResponse
 from app.observability import setup_tracing
@@ -36,6 +36,7 @@ app.include_router(documents.router)
 app.include_router(usage.router)
 app.include_router(analysis.router)
 app.include_router(trial.router)
+app.include_router(assistant.router)
 
 
 @app.get("/api/health")

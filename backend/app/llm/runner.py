@@ -3,7 +3,7 @@ record tokens/cost/latency in the case's own store (ADR-0002, ADR-0004)."""
 
 import asyncio
 import time
-from collections.abc import Callable
+from collections.abc import Awaitable, Callable, Sequence
 from decimal import Decimal
 from typing import Any, overload
 
@@ -30,20 +30,23 @@ from app.llm.registry import Role, resolve
 from app.observability import tracer
 from app.store.case_store import CaseStore, LLMCall
 
+# A tool the model may call: a plain async function with typed args and a docstring.
+ToolFunc = Callable[..., Awaitable[str]]
+
 
 @overload
 async def run_role[T: BaseModel](
     role: Role, *, case: Case, store: CaseStore, settings: Settings, prompt: Prompt,
     user_prompt: str, output_type: type[T], prompt_vars: dict[str, str] | None = None,
     job_id: str | None = None, session_id: str | None = None,
-    check: Callable[[T], list[str]] | None = None,
+    check: Callable[[T], list[str]] | None = None, tools: Sequence[ToolFunc] = (),
 ) -> T: ...  # fmt: skip
 @overload
 async def run_role(
     role: Role, *, case: Case, store: CaseStore, settings: Settings, prompt: Prompt,
     user_prompt: str, output_type: type[str], prompt_vars: dict[str, str] | None = None,
     job_id: str | None = None, session_id: str | None = None,
-    check: Callable[[str], list[str]] | None = None,
+    check: Callable[[str], list[str]] | None = None, tools: Sequence[ToolFunc] = (),
 ) -> str: ...  # fmt: skip
 async def run_role(
     role: Role,
@@ -58,6 +61,7 @@ async def run_role(
     job_id: str | None = None,
     session_id: str | None = None,
     check: Callable[[Any], list[str]] | None = None,
+    tools: Sequence[ToolFunc] = (),
 ) -> BaseModel | str:
     """`check` returns problems with an output (e.g. citations not found in the text). The model
     gets ONE corrective retry with those problems; after that the output is accepted and callers
@@ -70,6 +74,7 @@ async def run_role(
         instructions=prompt.render(**(prompt_vars or {})),
         model_settings=rm.settings,
         name=role,
+        tools=list(tools),  # read-only functions bound to this case's store (case assistant)
     )
     if check is not None:
 

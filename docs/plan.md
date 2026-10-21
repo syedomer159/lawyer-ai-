@@ -137,7 +137,7 @@ Sub-steps, each its own agent file with a typed output model:
 - Evals: run `trial_script.yaml` for both cases; deterministic: witness answers only cite own docs, phase order respected; LLM-judge rubric: witness consistency with statement (no invented facts), stays in role, judge rulings sensible.
 - **Exit:** scripted round completes for both cases via API and is playable in the UI.
 
-### Stage 6 — Case assistant chat (the one free tool-using agent)
+### Stage 6 — Case assistant chat (the one free tool-using agent) — DONE (see ADR-0003 notes)
 - Tools (read-only, case-scoped): `search_case`, `list_conflicts`, `get_timeline`, `get_issue`, `get_gaps`. Answers must carry validated citations.
 - Frontend: Assistant side panel available on every tab.
 - Evals: gold Q&A answer correctness (LLM-judge) + citation validity.

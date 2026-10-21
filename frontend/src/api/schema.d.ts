@@ -274,6 +274,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/cases/{case_id}/assistant": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Messages */
+        get: operations["list_messages"];
+        put?: never;
+        /**
+         * Ask
+         * @description Ask about this case; returns the whole conversation with the new answer.
+         */
+        post: operations["ask"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/health": {
         parameters: {
             query?: never;
@@ -386,6 +407,20 @@ export interface components {
              * @default false
              */
             local_only: boolean;
+        };
+        /** ChatMessage */
+        ChatMessage: {
+            /** Id */
+            id: number;
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "user" | "assistant";
+            /** Text */
+            text: string;
+            /** Citations */
+            citations: components["schemas"]["CitationView"][];
         };
         /** ChunkView */
         ChunkView: {
@@ -579,6 +614,11 @@ export interface components {
              * @enum {string}
              */
             role: "accused" | "complainant" | "witness" | "io" | "police" | "doctor" | "panch" | "other";
+        };
+        /** Question */
+        Question: {
+            /** Text */
+            text: string;
         };
         /** RoleUsage */
         RoleUsage: {
@@ -1378,6 +1418,72 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TrialSession"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_messages: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChatMessage"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    ask: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                case_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Question"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChatMessage"][];
                 };
             };
             /** @description Validation Error */

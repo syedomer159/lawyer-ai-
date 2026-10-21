@@ -236,3 +236,25 @@ export function useTrialDebrief(caseId: string, sessionId: string) {
     ),
   )
 }
+
+// --- case assistant -----------------------------------------------------------------------
+
+export function useAssistant(caseId: string) {
+  return useQuery({
+    queryKey: ['assistant', caseId],
+    queryFn: async () =>
+      unwrap(await api.GET('/api/cases/{case_id}/assistant', { params: { path: { case_id: caseId } } })),
+  })
+}
+
+export function useAsk(caseId: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (text: string) =>
+      unwrap(await api.POST('/api/cases/{case_id}/assistant', { params: { path: { case_id: caseId } }, body: { text } })),
+    onSuccess: (messages) => {
+      qc.setQueryData(['assistant', caseId], messages)
+      qc.invalidateQueries({ queryKey: ['usage', caseId] })
+    },
+  })
+}
