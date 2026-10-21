@@ -107,7 +107,11 @@ async def run(settings: Settings) -> Path:
     with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
         registry = Registry(Path(tmp))
         for case_dir in sample_cases():
-            row = await run_case(case_dir, settings, registry, embedder)
+            try:
+                row = await run_case(case_dir, settings, registry, embedder)
+            except Exception as exc:
+                # Keep the other cases' (paid) results; the report shows this case failed.
+                row = {"case": case_dir.name, "error": f"{type(exc).__name__}: {str(exc)[:200]}"}
             results.append(row)
             print({k: v for k, v in row.items() if k != "problems"})
         registry.close()
@@ -130,8 +134,11 @@ async def run(settings: Settings) -> Path:
         "| " + " | ".join(cols) + " |",
         "|" + "---|" * len(cols),
     ]
-    md += ["| " + " | ".join(str(r[c]) for c in cols) + " |" for r in results]
+    md += ["| " + " | ".join(str(r.get(c, "-")) for c in cols) + " |" for r in results]
     for r in results:
+        if "error" in r:
+            md += ["", f"## {r['case']}: FAILED", f"- {r['error']}"]
+            continue
         md += ["", f"## {r['case']}: answers flagged by the judge"]
         md += [f"- {p}" for p in r["problems"]] or ["- none"]
     return write_report(f"trial-{settings.model_profile}", results, md)
