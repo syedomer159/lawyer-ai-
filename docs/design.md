@@ -123,7 +123,7 @@ Design rule ([ADR-0003](adr/0003-workflow-vs-agents.md)): the analysis is a **fi
 
 Shared code (not LLM): the **citation checker** (quote must be in the cited chunk; one `ModelRetry` correction, then flagged), conflict de-duplication, and the one-transaction save.
 
-### Mock trial (in progress, Stage 5)
+### Mock trial (built, Stage 5)
 
 Phases come from code: opening → examination-in-chief → cross-examination → final arguments → judgment → debrief. Each role sees only what it would really know.
 
@@ -131,14 +131,14 @@ Phases come from code: opening → examination-in-chief → cross-examination �
 |---|---|---|---|
 | **Judge** | Procedure rules + transcript only | Runs the hearing, gives observations and judgment | None |
 | **Judge ruling** | The objection and the question | Sustained / overruled, with a reason | None |
-| **Opposing counsel** (public prosecutor when the lawyer defends) | Case summary + analysis results | Examines its witnesses, makes arguments | Case search (read-only) |
+| **Opposing counsel** (public prosecutor when the lawyer defends) | Case summary + analysis results | Examines its witnesses, makes arguments | None (works from the analysis brief; live search is a follow-up) |
 | **Objection check** (cheap model) | The lawyer's latest question | Decides whether to object, and on what ground | None |
 | **Witnesses / investigating officer** | **Only their own statement(s)** / police documents | Answer in character (cooperative, nervous or hostile); "I don't recall" beyond their statement | None |
 | **Debrief coach** | Transcript + Stage 4 analysis | Scores the round; lists contradictions the lawyer could have used; suggests better questions | None |
 
-### Case assistant (planned, Stage 6)
+### Case assistant (built, Stage 6)
 
-One tool-calling agent (`assistant` → Flash Lite). Its tools are **read-only and bound to one case**: `search_case`, `list_conflicts`, `get_timeline`, `get_issue`, `get_gaps`. Answers must carry verified citations.
+One tool-calling agent (`assistant` → Flash Lite). Its tools are **read-only and bound to one case**: `search_case`, `list_contradictions`, `list_gaps`, `list_arguments`, `timeline`. Answers must carry verified citations.
 
 ### Non-LLM components
 RapidOCR (scans/images), PyMuPDF (PDF text, boxes, page renders), local embedder (Ollama `nomic-embed-text`, always local), hybrid search, phase state machine, citation checker.
@@ -164,7 +164,9 @@ Prices: Gemini 3.5 Flash Lite at **$0.30 / M input, $2.50 / M output**, derived 
 
 Embeddings and OCR are local: $0.
 
-### Estimated: trial and assistant (not built or not measured yet)
+### Estimated: trial and assistant
+
+Measured since: one scripted trial on case 1 cost **$0.025** (40 calls, 2 min); the assistant is not measured yet. The estimate below is the original budget.
 
 | Agent | Calls / task | Tokens / call (in / out) | Tool calls | $ / task |
 |---|---|---|---|---|

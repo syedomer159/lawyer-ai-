@@ -1,5 +1,7 @@
 # Lawyer Case-Prep AI — MVP Plan (India BNS/BNSS)
 
+> **Status (2026-10-21):** Stages 0–6 done, Stage 7 next. Current state, what was left out, and the manual test checklist: [HANDOFF.md](HANDOFF.md).
+
 ## Context
 AI-architect workshop project. A lawyer uploads all material for ONE case (text notes, PDFs, images), and the system:
 1. Runs a **mock trial** with role-playing agents (judge, public prosecutor / opposing counsel, investigating officer, witnesses).
@@ -80,7 +82,7 @@ lawyer-ai/
 
 ## Stages (each stage = backend + contract + UI tab + tests + evals, so nothing is left unconnected)
 
-### Stage 0 — Foundation & risk spikes
+### Stage 0 — Foundation & risk spikes — DONE
 - `project-setup` skill: git init, CLAUDE.md, structure above, ruff + pyright, eslint + tsc, pre-commit.
 - OpenAPI → TS pipeline: `npm run gen:api` (openapi-typescript) so the frontend never hand-copies types.
 - Spikes (throwaway, in `scripts/spikes/`) to kill risks before building:
@@ -92,7 +94,7 @@ lawyer-ai/
 - ADRs 0001–0005 written (isolation, Pydantic AI + routing, workflow-vs-agents, Phoenix, citations).
 - **Exit:** `uv run pytest`, `ruff`, `pyright`, `npm run build`, `npm run lint` all green; spike notes recorded in ADRs.
 
-### Stage 1 — Sample cases + answer keys (data before features)
+### Stage 1 — Sample cases + answer keys (data before features) — DONE
 `samples/generate.py` builds both cases reproducibly (reportlab/PyMuPDF for PDFs, Pillow for "scanned" images with skew/noise), so the ground truth text is known.
 - **Case 1 – State v. Arjun Verma (robbery, BNS 309)**: FIR (text PDF), complainant's police statement, 2 eyewitness statements (one as scanned image-only PDF), IO seizure/recovery memo, arrest memo, MLC, CCTV still (image with timestamp overlay), municipal letter on streetlight, lawyer's client-interview notes (.txt). Planted: time-of-incident mismatch, jacket colour mismatch, "clear view" vs streetlight not working, CCTV timestamp vs FIR time, panch witness says not present at recovery, no TIP, 2-day unexplained FIR delay.
 - **Case 2 – State v. Kavita Rao (death by negligence, BNS 106 + rash driving 281)**: FIR, 3 eyewitness statements, post-mortem report, mechanical inspection report, site-plan sketch (image), vehicle-damage photos, driver's licence record, notes. Planted: who was driving, vehicle colour, injury side vs claimed impact direction, site-plan distance vs witness position, speed estimate inconsistent with skid marks, missing CCTV request.
@@ -100,7 +102,7 @@ lawyer-ai/
 - Verify statute/section references once with a quick source check; legal_refs YAML marks anything uncertain.
 - **Exit:** validator script checks every answer-key ref points to a real doc/page; files open correctly.
 
-### Stage 2 — Core: cases, upload, ingest, retrieval, document viewer
+### Stage 2 — Core: cases, upload, ingest, retrieval, document viewer — DONE
 - Backend: cases CRUD, upload (type/size checks, sha256 dedupe), ingest job (BackgroundTasks + `jobs` row): text PDF → PyMuPDF blocks; image/scanned page → RapidOCR; .txt → paragraphs; chunk with SourceRef; embed; FTS5. Page PNG endpoint.
 - Frontend: Cases list/create (client, side, charges, local_only), Case workspace shell with tabs, Documents tab (upload, status, viewer with highlighted bbox).
 - Tests: parsers, chunker, RRF, **isolation test**, API tests.
@@ -143,7 +145,7 @@ Sub-steps, each its own agent file with a typed output model:
 - Evals: gold Q&A answer correctness (LLM-judge) + citation validity.
 - **Exit:** gold questions answered with valid citations on both cases.
 
-### Stage 7 — Hardening & deploy
+### Stage 7 — Hardening & deploy — NEXT (detailed steps in HANDOFF.md §4)
 - Simple bearer-token auth (single user/firm MVP), upload limits, CORS, structured error responses.
 - `docker-compose.yml`: backend, frontend (static via nginx), phoenix; Ollama stays on host (`OLLAMA_BASE_URL`). Data volume for `data/`.
 - CI (GitHub Actions): lint, typecheck, unit/API tests using `TestModel` (no LLM, no cost). Evals run manually: `uv run python -m evals.run --profile hybrid --case all`.

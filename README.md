@@ -8,6 +8,8 @@ Upload the files of one criminal case (notes, PDFs, scanned statements, evidence
 
 Each case is stored in its own isolated folder and database. Models can run locally (Ollama) or in the cloud, chosen per role.
 
+Handoff, remaining work and the manual test checklist: [docs/HANDOFF.md](docs/HANDOFF.md).
+
 Status: Stages 0–4 done (foundation, sample data, upload + OCR + search + viewer, model routing + tracing, case analysis: contradictions, gaps, arguments; mock trial with judge, prosecutor, IO and witness agents plus a debrief; case assistant chat with cited answers). Two synthetic test cases with answer keys and scripted mock-trial rounds are in [samples/](samples/): upload the files in `samples/<case>/files/`. Design (requirements, estimation, data, agents, cost, decisions): [docs/design.md](docs/design.md). Staged build plan: [docs/plan.md](docs/plan.md).
 
 ## Run locally
