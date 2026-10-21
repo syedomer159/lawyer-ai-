@@ -1,0 +1,39 @@
+# Elements the prosecution must prove, per charged section. Small and curated on purpose: the gap
+# analyst checks the evidence against these instead of relying on the model's memory of statutes.
+# verified: true only where the section text was checked against a source (see source:).
+# Add an entry here to support a new charge; unknown charges fall back to general reasoning,
+# flagged as unverified in the output.
+
+"BNS 304":
+  title: Snatching
+  verified: true
+  source: https://devgan.in/bns/section/304/
+  elements:
+    - Theft of movable property (dishonest taking out of the person's possession without consent)
+    - Property was suddenly, quickly or forcibly seized, secured, grabbed or taken away from the person
+    - Identity of the accused as the person who snatched it
+
+"BNS 309":
+  title: Robbery
+  verified: true
+  source: https://vidhijudicial.com/section-309-of-the-bharatiya-nyaya-sanhita-(bns)-of-2023.html
+  elements:
+    - Theft (or extortion) was committed
+    - In committing it, or carrying the property away, the accused voluntarily caused or attempted to cause death, hurt or wrongful restraint, or fear of instant death, hurt or wrongful restraint
+    - Identity of the accused
+
+"BNS 106":
+  title: Causing death by negligence
+  verified: false  # section number and wording not confirmed from a source
+  elements:
+    - Death of the person was caused by the act of the accused
+    - The act was rash or negligent
+    - The act did not amount to culpable homicide
+    - Identity of the accused as the person who did the act (e.g. who was driving)
+
+"BNS 281":
+  title: Rash driving or riding on a public way
+  verified: false  # section number and wording not confirmed from a source
+  elements:
+    - The accused drove or rode a vehicle on a public way
+    - The driving was so rash or negligent as to endanger human life or be likely to cause hurt or injury

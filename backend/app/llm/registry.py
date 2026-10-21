@@ -29,22 +29,26 @@ Role = Literal[
 ROLES: tuple[str, ...] = get_args(Role)
 
 
+# A role's model, or a fallback chain tried in order (e.g. when the first is overloaded).
+ModelSpec = str | list[str]
+
+
 class ProfileConfig(BaseModel):
     model_config = ConfigDict(extra="forbid")  # a typo'd role name fails loudly
 
-    default: str
+    default: ModelSpec
     # One optional override per role (pydantic needs real fields to forbid unknown keys).
-    extractor: str | None = None
-    analyst: str | None = None
-    argument: str | None = None
-    judge: str | None = None
-    opposing_counsel: str | None = None
-    io: str | None = None
-    witness: str | None = None
-    assistant: str | None = None
-    debrief: str | None = None
-    vision: str | None = None
-    eval_judge: str | None = None
+    extractor: ModelSpec | None = None
+    analyst: ModelSpec | None = None
+    argument: ModelSpec | None = None
+    judge: ModelSpec | None = None
+    opposing_counsel: ModelSpec | None = None
+    io: ModelSpec | None = None
+    witness: ModelSpec | None = None
+    assistant: ModelSpec | None = None
+    debrief: ModelSpec | None = None
+    vision: ModelSpec | None = None
+    eval_judge: ModelSpec | None = None
 
 
 class ModelsConfig(BaseModel):
@@ -57,14 +61,22 @@ class ModelsConfig(BaseModel):
 class RoleModel:
     role: Role
     profile: Profile
-    model: str
+    models: tuple[str, ...]  # primary first, then fallbacks
     settings: ModelSettings
     native_output: bool  # Ollama: grammar-constrained JSON schema output (ADR-0002)
+
+    @property
+    def primary(self) -> str:
+        return self.models[0]
 
 
 def is_offline(model: str) -> bool:
     """Ollama runs on this machine; "test" is pydantic-ai's offline fake used by the tests."""
     return model.startswith("ollama:") or model == "test"
+
+
+def _chain(spec: ModelSpec) -> tuple[str, ...]:
+    return (spec,) if isinstance(spec, str) else tuple(spec)
 
 
 @cache
@@ -73,20 +85,25 @@ def load_models_config(path: Path) -> ModelsConfig:
     missing = set(get_args(Profile)) - set(config.profiles)
     if missing:
         raise ValueError(f"{path}: missing profiles {sorted(missing)}")
-    # local_only cases rely on this: the local profile must never route text off the machine.
-    local = config.profiles["local"].model_dump(exclude_none=True)
-    if leaks := {role: m for role, m in local.items() if not is_offline(m)}:
-        raise ValueError(f"{path}: local profile has non-Ollama models {leaks}")
+    for name, profile in config.profiles.items():
+        for role, spec in profile.model_dump(exclude_none=True).items():
+            chain = _chain(spec)
+            # Settings and output mode are chosen per role, so a chain can't mix local and cloud.
+            if not chain or len({m.startswith("ollama:") for m in chain}) > 1:
+                raise ValueError(f"{path}: {name}.{role} mixes local and cloud models: {chain}")
+            # local_only cases rely on this: the local profile must never send text off the machine.
+            if name == "local" and not all(is_offline(m) for m in chain):
+                raise ValueError(f"{path}: local profile has non-Ollama models in {role}: {chain}")
     return config
 
 
 def resolve(role: Role, case: Case, profile: Profile, config_path: Path) -> RoleModel:
     effective: Profile = "local" if case.local_only else profile
     profile_config = load_models_config(config_path).profiles[effective]
-    model = getattr(profile_config, role) or profile_config.default
-    local = model.startswith("ollama:")
+    models = _chain(getattr(profile_config, role) or profile_config.default)
+    local = models[0].startswith("ollama:")
     # qwen3.5 is a thinking model: with reasoning on, a short CPU call takes 10+ minutes.
     settings: ModelSettings = {}
     if local:
         settings = OpenAIChatModelSettings(openai_reasoning_effort="none")
-    return RoleModel(role, effective, model, settings, native_output=local)
+    return RoleModel(role, effective, models, settings, native_output=local)

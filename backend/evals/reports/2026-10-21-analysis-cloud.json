@@ -1,0 +1,59 @@
+[
+  {
+    "case": "case1_state_v_arjun_verma",
+    "profile": "cloud",
+    "seconds": 257.3,
+    "llm_calls": 35,
+    "tokens": 70355,
+    "cost_usd": 0.0607,
+    "contradiction_recall": 0.857,
+    "conflicts_predicted": 16,
+    "matched_share": 0.625,
+    "effect_correct": 1.0,
+    "gap_recall": 1.0,
+    "adverse_recall": 0.5,
+    "citation_verified": 1.0,
+    "claims": 24,
+    "issues": 12,
+    "missed_contradictions": [
+      "C1 time of incident"
+    ],
+    "missed_gaps": [],
+    "unmatched_conflicts": [
+      "[high/helps] suspect clothing description: PW1 Sunita Sharma states the assailant wore a blue jacket, while PW2 Ramesh Kumar states the assailant wore a red jacket, creating a direct contradiction between key prosecution eye-witnesses regarding the suspect's clothing.",
+      "[high/helps] recovery of stolen property and jacket: Ramesh Kumar (PW2) claims the perpetrator wore a red jacket [37], but the recovery memo prepared by SI Pradeep Rathore records the recovery of a blue jacket from the accused's almirah [69].",
+      "[high/helps] recovery of stolen property and jacket: While the recovery memo records a blue jacket being recovered from the accused's almirah [69], client interview notes state that the blue jacket does not belong to Arjun and he only owns a black jacket [100, 101].",
+      "[high/helps] identification of the accused: Informant Smt. Sunita Sharma claimed she could identify the assailant, but the identification of the accused in custody was instead conducted by Ramesh Kumar (PW-2) after the police showed the boy to him at the station.",
+      "[medium/helps] suspect clothing description: PW1 Sunita Sharma specifically identifies the jacket as blue, while PW3 Mohd. Irfan states he could not tell the colour of the dark jacket.",
+      "[low/helps] time and date of occurrence: PW2 Ramesh Kumar states the incident occurred at about 8:30 pm, whereas PW3 Mohd. Irfan states it was at around 9:00 pm, creating a discrepancy in the timeline of the occurrence."
+    ]
+  },
+  {
+    "case": "case2_state_v_kavita_rao",
+    "profile": "cloud",
+    "seconds": 317.9,
+    "llm_calls": 36,
+    "tokens": 68101,
+    "cost_usd": 0.0576,
+    "contradiction_recall": 0.833,
+    "conflicts_predicted": 12,
+    "matched_share": 0.75,
+    "effect_correct": 1.0,
+    "gap_recall": 0.75,
+    "adverse_recall": 1.0,
+    "citation_verified": 1.0,
+    "claims": 20,
+    "issues": 12,
+    "missed_contradictions": [
+      "C5 eyewitness's distance from the spot"
+    ],
+    "missed_gaps": [
+      "G4 FIR based on eyewitness information"
+    ],
+    "unmatched_conflicts": [
+      "[high/helps] actions of the driver after the accident: Witness Lata Pawar states that a man got out of the car and walked towards the railway station, which directly corroborates our client Kavita Rao's account that the driver Manoj Shinde panicked and fled towards the railway station.",
+      "[high/hurts] actions of the driver after the accident: Witness Anil Deshmukh claims the woman driver got down from the car, whereas witness Lata Pawar claims a man got out and walked away while the lady stayed, creating a direct contradiction between prosecution witnesses regarding who exited the vehicle.",
+      "[medium/helps] side of impact on the victim: Eyewitness Anil Deshmukh asserts the car struck the victim's left side, but the Motor Vehicle Inspection Report notes the vehicle damage (dent on the bonnet) was on the left side, conflicting with the eyewitness's account of how the pedestrian and car approached or faced each other."
+    ]
+  }
+]

@@ -44,14 +44,21 @@ async def smoke(profile: Profile, tmp: Path) -> None:
     run_settings = Settings(**{**settings.model_dump(), "model_profile": profile})
     try:
         out = await run_role(
-            "extractor", case=case, store=store, settings=run_settings,
-            prompt=load_prompt("smoke"), user_prompt=f"<document>\n{STATEMENT}\n</document>",
-            output_type=Claims, job_id=f"smoke-{profile}",
-        )  # fmt: skip
+            "extractor",
+            case=case,
+            store=store,
+            settings=run_settings,
+            prompt=load_prompt("smoke"),
+            user_prompt=f"<document>\n{STATEMENT}\n</document>",
+            output_type=Claims,
+            job_id=f"smoke-{profile}",
+        )
         row = store.db.execute("SELECT * FROM llm_calls").fetchone()
-        print(f"[{profile}] {row['model']}: {len(out.claims)} claims, {row['latency_ms']} ms, "
-              f"{row['input_tokens']} in / {row['output_tokens']} out, cost {row['cost_usd']}, "
-              f"trace {row['trace_id']}")  # fmt: skip
+        print(
+            f"[{profile}] {row['model']}: {len(out.claims)} claims, {row['latency_ms']} ms, "
+            f"{row['input_tokens']} in / {row['output_tokens']} out, cost {row['cost_usd']}, "
+            f"trace {row['trace_id']}"
+        )
     finally:
         store.close()
         registry.close()

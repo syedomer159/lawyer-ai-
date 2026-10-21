@@ -1,0 +1,29 @@
+# A defence lawyer's procedural checklist for a criminal investigation (Indian BNSS/BSA).
+# The gap analyst marks each item supported / weak / missing from the case material.
+# Section numbers marked verified: false were not confirmed from a source.
+
+- item: Prompt FIR, or a recorded explanation for any delay in registering it
+  ref: BNSS 173
+  verified: true
+- item: Identification of an accused not previously known to the witness (test identification parade before dock identification; no showing of the accused beforehand)
+  ref: BNSS identification provision
+  verified: false
+- item: Search and seizure recorded by audio-video electronic means, recording sent to the Magistrate
+  ref: BNSS 105
+  verified: true
+- item: Independent, credible witnesses to search, recovery or seizure (not only police or habitual witnesses)
+  verified: true
+- item: Seized property sealed, chain of custody documented, and the property identified by the owner
+  verified: true
+- item: Electronic evidence (CCTV, call records, phone data) collected and accompanied by the required certificate
+  ref: BSA electronic record certificate
+  verified: false
+- item: Witness statements recorded promptly, before the witness could be influenced
+  ref: BNSS 180
+  verified: true
+- item: Medical evidence (MLC / post-mortem) consistent with the prosecution's account
+  verified: true
+- item: Site plan / scene evidence consistent with what the witnesses say they saw
+  verified: true
+- item: Obvious lines of investigation followed (available CCTV, other witnesses, the accused's explanation)
+  verified: true

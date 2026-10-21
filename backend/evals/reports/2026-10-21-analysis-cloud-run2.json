@@ -1,0 +1,59 @@
+[
+  {
+    "case": "case1_state_v_arjun_verma",
+    "profile": "cloud",
+    "seconds": 246.5,
+    "llm_calls": 34,
+    "tokens": 65233,
+    "cost_usd": 0.0631,
+    "contradiction_recall": 1.0,
+    "conflicts_predicted": 13,
+    "matched_share": 0.769,
+    "effect_correct": 1.0,
+    "gap_recall": 0.833,
+    "adverse_recall": 1.0,
+    "citation_verified": 1.0,
+    "claims": 23,
+    "issues": 12,
+    "missed_contradictions": [],
+    "missed_gaps": [
+      "G1 Prompt FIR / explanation of delay"
+    ],
+    "unmatched_conflicts": [
+      "[high/helps] suspect clothing / jacket description and recovery: The police recovery memo records finding a blue jacket, whereas client interview notes state that Arjun Verma only owns a black jacket, creating a contradiction between the official recovery and the defence's factual stance.",
+      "[high/helps] arrest details and date/location discrepancy: SI Pradeep Rathore records in the arrest memo that Arjun was arrested at the Navgarh bus stand (claim 62), while the defence notes state he was picked up directly from his house (claim 106), contradicting the official place of arrest.",
+      "[high/helps] recovery memo and panch witness veracity: While the recovery memo suggests a formal search and recovery witnessed by panch witnesses, Suresh Yadav categorically states he never saw any chain being recovered."
+    ]
+  },
+  {
+    "case": "case2_state_v_kavita_rao",
+    "profile": "cloud",
+    "seconds": 255.2,
+    "llm_calls": 32,
+    "tokens": 69512,
+    "cost_usd": 0.0575,
+    "contradiction_recall": 0.167,
+    "conflicts_predicted": 3,
+    "matched_share": 0.333,
+    "effect_correct": 1.0,
+    "gap_recall": 0.75,
+    "adverse_recall": 0.5,
+    "citation_verified": 1.0,
+    "claims": 6,
+    "issues": 12,
+    "missed_contradictions": [
+      "C2 colour of the vehicle",
+      "C3 direction of crossing and side of impact",
+      "C4 speed of the vehicle",
+      "C5 eyewitness's distance from the spot",
+      "C6 how and where the victim entered the road"
+    ],
+    "missed_gaps": [
+      "G4 FIR based on eyewitness information"
+    ],
+    "unmatched_conflicts": [
+      "[medium/helps] actions of occupants after accident: PW1 Anil Deshmukh claims a woman got down from the car, whereas PW2 Lata Pawar claims a man got out of the car and walked away, creating a contradiction regarding which occupant exited the vehicle.",
+      "[low/helps] parked bus at the scene: Lata Pawar (PW2) states a bus was parked at the bus stop, which is consistent with the defence notes stating the deceased pedestrian emerged from behind a parked MSRTC bus, corroborating our client's version that the pedestrian's appearance was sudden and obstructed."
+    ]
+  }
+]

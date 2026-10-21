@@ -101,3 +101,49 @@ export function useUsage(caseId: string) {
       unwrap(await api.GET('/api/cases/{case_id}/usage', { params: { path: { case_id: caseId } } })),
   })
 }
+
+// Analysis types as the UI receives them (derived from the fetched data, see BBox in client.ts).
+export type AnalysisData = NonNullable<ReturnType<typeof useAnalysis>['data']>
+export type ConflictData = AnalysisData['conflicts'][number]
+export type ClaimData = ConflictData['claims'][number]
+export type CitationData = ClaimData['citation']
+export type ElementData = AnalysisData['elements'][number]
+export type IssueData = AnalysisData['issues'][number]
+
+export function useAnalysis(caseId: string) {
+  const qc = useQueryClient()
+  return useQuery({
+    queryKey: ['analysis', caseId],
+    queryFn: async () => {
+      const data = unwrap(
+        await api.GET('/api/cases/{case_id}/analysis', { params: { path: { case_id: caseId } } }),
+      )
+      if (data.job?.status !== 'running') qc.invalidateQueries({ queryKey: ['usage', caseId] })
+      return data
+    },
+    refetchInterval: (query) => (query.state.data?.job?.status === 'running' ? POLL_MS : false),
+  })
+}
+
+export function useStartAnalysis(caseId: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async () =>
+      unwrap(await api.POST('/api/cases/{case_id}/analysis', { params: { path: { case_id: caseId } } })),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['analysis', caseId] }),
+  })
+}
+
+export function useSetConflictStatus(caseId: string) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, status }: { id: number; status: 'open' | 'dismissed' }) => {
+      const res = await api.PATCH('/api/cases/{case_id}/conflicts/{conflict_id}', {
+        params: { path: { case_id: caseId, conflict_id: id } },
+        body: { status },
+      })
+      if (!res.response.ok) throw new Error(`Update failed (${res.response.status})`)
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['analysis', caseId] }),
+  })
+}

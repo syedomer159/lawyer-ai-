@@ -1,0 +1,5 @@
+# Tests never call a real model: every role in every profile uses pydantic-ai's offline TestModel.
+profiles:
+  local: {default: test}
+  hybrid: {default: test}
+  cloud: {default: test}

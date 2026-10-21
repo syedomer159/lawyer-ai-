@@ -8,6 +8,11 @@ from opentelemetry.sdk.trace import ReadableSpan, TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
 from pydantic import BaseModel, SecretStr, ValidationError
+from pydantic_ai import Agent
+from pydantic_ai.exceptions import ModelAPIError, ModelHTTPError
+from pydantic_ai.messages import ModelMessage, ModelResponse, TextPart
+from pydantic_ai.models.fallback import FallbackModel
+from pydantic_ai.models.function import AgentInfo, FunctionModel
 from pydantic_ai.models.google import GoogleModel
 from pydantic_ai.models.ollama import OllamaModel
 
@@ -15,7 +20,13 @@ from app.config import REPO_ROOT
 from app.contracts.cases import Case
 from app.llm.prompts import Prompt, load_prompt
 from app.llm.registry import load_models_config, resolve
-from app.llm.runner import build_model, run_role
+from app.llm.runner import (
+    _answering_model,
+    _run_with_transport_retry,
+    build_chain,
+    build_model,
+    run_role,
+)
 from app.store.case_store import CaseStore
 from tests.conftest import TestSettings, create_case
 
@@ -69,13 +80,15 @@ profiles:
 
 def test_roles_fall_back_to_profile_default() -> None:
     case = make_case()
-    assert resolve("judge", case, "cloud", REAL_CONFIG).model == "google:gemini-3.5-flash"
-    assert resolve("witness", case, "cloud", REAL_CONFIG).model == "google:gemini-3.5-flash-lite"
+    assert resolve("judge", case, "cloud", REAL_CONFIG).primary == "google:gemini-3.5-flash"
+    assert resolve("witness", case, "cloud", REAL_CONFIG).models == (
+        "google:gemini-3.5-flash-lite",
+    )
 
 
 def test_local_models_get_reasoning_off_and_native_output() -> None:
     rm = resolve("witness", make_case(), "hybrid", REAL_CONFIG)
-    assert rm.model.startswith("ollama:")
+    assert rm.primary.startswith("ollama:")
     assert rm.native_output
     assert rm.settings.get("openai_reasoning_effort") == "none"
     assert not resolve("judge", make_case(), "hybrid", REAL_CONFIG).native_output
@@ -85,7 +98,7 @@ def test_local_only_case_never_uses_a_cloud_model() -> None:
     case = make_case(local_only=True)
     for role in ("judge", "analyst", "witness", "assistant"):
         rm = resolve(role, case, "cloud", REAL_CONFIG)
-        assert rm.profile == "local" and rm.model.startswith("ollama:"), role
+        assert rm.profile == "local" and all(m.startswith("ollama:") for m in rm.models), role
 
 
 def test_config_rejects_unknown_role(tmp_path: Path) -> None:
@@ -189,3 +202,48 @@ def test_cloud_keys_come_from_settings_not_process_env(
     s = TestSettings(data_dir=tmp_path, gemini_api_key=SecretStr("from-dotenv"))
     assert isinstance(build_model("google:gemini-3.5-flash-lite", s), GoogleModel)
     assert build_model("test", s) == "test"
+
+
+def test_fallback_chains(tmp_path: Path) -> None:
+    rm = resolve("judge", make_case(), "cloud", REAL_CONFIG)
+    assert rm.models == ("google:gemini-3.5-flash", "google:gemini-3.5-flash-lite")
+    s = TestSettings(data_dir=tmp_path, gemini_api_key=SecretStr("k"))
+    assert isinstance(build_chain(rm.models, s), FallbackModel)
+    assert _answering_model(rm.models, "gemini-3.5-flash-lite") == "google:gemini-3.5-flash-lite"
+    assert _answering_model(rm.models, None) == "google:gemini-3.5-flash"
+
+
+def test_config_rejects_chain_mixing_local_and_cloud(tmp_path: Path) -> None:
+    body = TEST_CONFIG.replace("cloud: {default: test}", "cloud: {default: [ollama:x, google:y]}")
+    with pytest.raises(ValueError, match="mixes local and cloud"):
+        load_models_config(write_config(tmp_path, body))
+
+
+def _flaky_agent(failures: int, error: Exception) -> tuple[Agent[None, str], list[int]]:
+    """A real Agent whose model fails like a dropped connection for its first calls."""
+    calls: list[int] = []
+
+    def respond(messages: list[ModelMessage], info: AgentInfo) -> ModelResponse:
+        calls.append(1)
+        if len(calls) <= failures:
+            raise error
+        return ModelResponse(parts=[TextPart("ok")])
+
+    return Agent(FunctionModel(respond)), calls
+
+
+@pytest.mark.anyio
+async def test_transport_errors_are_retried_but_http_errors_are_not(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    async def no_sleep(_: float) -> None: ...
+
+    monkeypatch.setattr("app.llm.runner.asyncio.sleep", no_sleep)
+    agent, calls = _flaky_agent(2, ModelAPIError("m", "ConnectTimeout"))
+    assert (await _run_with_transport_retry(agent, "p")).output == "ok"
+    assert len(calls) == 3
+
+    agent, calls = _flaky_agent(1, ModelHTTPError(503, "m", "overloaded"))
+    with pytest.raises(ModelHTTPError):
+        await _run_with_transport_retry(agent, "p")
+    assert len(calls) == 1

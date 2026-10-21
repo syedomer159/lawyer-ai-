@@ -6,12 +6,23 @@ agents, tools) is handed one CaseStore and nothing else.
 
 import json
 import sqlite3
+import threading
 import uuid
 from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
 
+from app.contracts.analysis import (
+    CONFLICT_STATUSES,
+    CONFLICT_TYPES,
+    EFFECTS,
+    ELEMENT_KINDS,
+    ELEMENT_STATUSES,
+    JOB_STATUSES,
+    PARTY_ROLES,
+    SEVERITIES,
+)
 from app.contracts.documents import (
     DOCUMENT_KINDS,
     DOCUMENT_STATUSES,
@@ -79,7 +90,70 @@ MIGRATIONS = [
         trace_id TEXT NOT NULL
     );
     """,
+    # v3: analysis results (Stage 4). Replaced as a whole by each successful analysis run.
+    f"""
+    CREATE TABLE jobs (
+        id TEXT PRIMARY KEY,
+        kind TEXT NOT NULL,
+        status TEXT NOT NULL CHECK (status IN ({_in(JOB_STATUSES)})),
+        step TEXT NOT NULL,
+        progress REAL NOT NULL,
+        error TEXT,
+        started_at TEXT NOT NULL,
+        finished_at TEXT
+    );
+    CREATE TABLE parties (
+        id INTEGER PRIMARY KEY,
+        name TEXT NOT NULL,
+        role TEXT NOT NULL CHECK (role IN ({_in(PARTY_ROLES)}))
+    );
+    CREATE TABLE claims (
+        id INTEGER PRIMARY KEY,
+        speaker TEXT NOT NULL,
+        aspect TEXT NOT NULL,
+        statement TEXT NOT NULL,
+        when_iso TEXT,
+        chunk_id INTEGER NOT NULL REFERENCES chunks(id),
+        quote TEXT NOT NULL,
+        verified INTEGER NOT NULL
+    );
+    CREATE TABLE conflicts (
+        id INTEGER PRIMARY KEY,
+        aspect TEXT NOT NULL,
+        type TEXT NOT NULL CHECK (type IN ({_in(CONFLICT_TYPES)})),
+        severity TEXT NOT NULL CHECK (severity IN ({_in(SEVERITIES)})),
+        effect TEXT NOT NULL CHECK (effect IN ({_in(EFFECTS)})),
+        explanation TEXT NOT NULL,
+        status TEXT NOT NULL CHECK (status IN ({_in(CONFLICT_STATUSES)})),
+        claim_ids TEXT NOT NULL
+    );
+    CREATE TABLE elements (
+        id INTEGER PRIMARY KEY,
+        kind TEXT NOT NULL CHECK (kind IN ({_in(ELEMENT_KINDS)})),
+        element TEXT NOT NULL,
+        status TEXT NOT NULL CHECK (status IN ({_in(ELEMENT_STATUSES)})),
+        explanation TEXT NOT NULL,
+        citations TEXT NOT NULL
+    );
+    CREATE TABLE adverse (
+        id INTEGER PRIMARY KEY,
+        explanation TEXT NOT NULL,
+        citations TEXT NOT NULL
+    );
+    CREATE TABLE issues (
+        id INTEGER PRIMARY KEY,
+        title TEXT NOT NULL,
+        our_argument TEXT NOT NULL,
+        opposing_argument TEXT NOT NULL,
+        rebuttal TEXT NOT NULL,
+        cross_questions TEXT NOT NULL,
+        citations TEXT NOT NULL
+    );
+    """,
 ]
+
+
+_SETUP_LOCK = threading.Lock()
 
 
 @dataclass
@@ -120,11 +194,17 @@ class CaseStore:
         self.pages_dir.mkdir(exist_ok=True)
         self.db = sqlite3.connect(case_dir / "case.db", check_same_thread=False)
         self.db.row_factory = sqlite3.Row
-        self.db.execute("PRAGMA journal_mode=WAL")  # API reads while an ingest job writes
         self.db.execute("PRAGMA foreign_keys=ON")
-        self._migrate()
+        # Concurrent requests open the same case at once. Switching to WAL and migrating both need
+        # an exclusive lock, so one thread does them while the others wait (one server process
+        # per data dir is assumed; this lock does not span processes).
+        with _SETUP_LOCK:
+            self.db.execute("PRAGMA journal_mode=WAL")  # API reads while an ingest job writes
+            self._migrate()
 
     def _migrate(self) -> None:
+        """Apply pending migrations. Called under _SETUP_LOCK: the version must be read inside
+        the lock, or two threads both apply the same migration."""
         version = self.db.execute("PRAGMA user_version").fetchone()[0]
         for i, sql in enumerate(MIGRATIONS[version:], start=version + 1):
             with self.db:
@@ -267,6 +347,16 @@ class CaseStore:
             cost_usd=sum(r.cost_usd for r in by_role),
             by_role=by_role,
         )
+
+    def doc_chunks(self, doc_id: str) -> list[tuple[int, int, str]]:
+        """(chunk_id, page, text) for one document, in reading order."""
+        rows = self.db.execute(
+            "SELECT id, page_no, text FROM chunks WHERE doc_id = ? ORDER BY page_no, id", (doc_id,)
+        ).fetchall()
+        return [(r[0], r[1], r[2]) for r in rows]
+
+    def chunk_texts(self) -> dict[int, str]:
+        return {r[0]: r[1] for r in self.db.execute("SELECT id, text FROM chunks")}
 
     def chunks_by_id(self, ids: list[int]) -> dict[int, tuple[SourceRef, str]]:
         if not ids:

@@ -28,6 +28,7 @@ class TestSettings(Settings):
 
     __test__ = False  # not a pytest test class
     model_config = SettingsConfigDict(env_file=None, extra="ignore", env_ignore_empty=True)
+    models_config: Path = Path(__file__).parent / "models.test.yaml"  # offline models only
 
 
 class FakeEmbedder:

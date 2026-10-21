@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.routing import APIRoute
 
-from app.api import cases, documents, usage
+from app.api import analysis, cases, documents, usage
 from app.config import settings
 from app.contracts import HealthResponse
 from app.observability import setup_tracing
@@ -34,6 +34,7 @@ app.add_middleware(
 app.include_router(cases.router)
 app.include_router(documents.router)
 app.include_router(usage.router)
+app.include_router(analysis.router)
 
 
 @app.get("/api/health")

@@ -1,5 +1,7 @@
 # Which model plays each role, per profile (ADR-0002). Values are pydantic-ai model strings.
-# A role not listed uses its profile's `default`. Roles are defined in backend/app/llm/registry.py;
+# A role not listed uses its profile's `default`. A list is a fallback chain: if the first
+# model still fails after the provider's own retries (e.g. "model overloaded"), the next is used.
+# Roles are defined in backend/app/llm/registry.py;
 # an unknown role or profile here fails at startup.
 # A case marked local_only always uses the `local` profile, whatever MODEL_PROFILE says.
 profiles:
@@ -13,15 +15,15 @@ profiles:
     default: google:gemini-3.5-flash-lite
     witness: ollama:qwen3.5:4b
     io: ollama:qwen3.5:4b
-    analyst: google:gemini-3.5-flash
-    argument: google:gemini-3.5-flash
-    judge: google:gemini-3.5-flash
-    debrief: google:gemini-3.5-flash
+    analyst: [google:gemini-3.5-flash, google:gemini-3.5-flash-lite]
+    argument: [google:gemini-3.5-flash, google:gemini-3.5-flash-lite]
+    judge: [google:gemini-3.5-flash, google:gemini-3.5-flash-lite]
+    debrief: [google:gemini-3.5-flash, google:gemini-3.5-flash-lite]
 
   # Default. Flash Lite for high-volume roles, Flash where reasoning quality matters.
   cloud:
     default: google:gemini-3.5-flash-lite
-    analyst: google:gemini-3.5-flash
-    argument: google:gemini-3.5-flash
-    judge: google:gemini-3.5-flash
-    debrief: google:gemini-3.5-flash
+    analyst: [google:gemini-3.5-flash, google:gemini-3.5-flash-lite]
+    argument: [google:gemini-3.5-flash, google:gemini-3.5-flash-lite]
+    judge: [google:gemini-3.5-flash, google:gemini-3.5-flash-lite]
+    debrief: [google:gemini-3.5-flash, google:gemini-3.5-flash-lite]

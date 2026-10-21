@@ -1,6 +1,8 @@
 # Ground truth for evals. Every ref is {doc, page, quote}; quote is an exact (whitespace-
 # normalised) substring of that page's text in manifest.json. Checked by samples/validate.py.
 # effect = effect on OUR client (defence): helps | hurts.
+# Where several documents state the same side of a contradiction, list each of them: citing any
+# one of them is a correct finding.
 case: case2
 user_side: defence
 
@@ -35,6 +37,8 @@ contradictions:
     refs:
       - {doc: 02_Statement_Anil_Deshmukh_PW1.pdf, page: 1, quote: "A silver-grey car came at very high speed"}
       - {doc: 06_Mechanical_Inspection_Report.pdf, page: 1, quote: "colour: Pearl White"}
+      - {doc: 01_FIR_208-2026.pdf, page: 1, quote: "a white SUV driven by a lady"}
+      - {doc: 03_Statement_Lata_Pawar_PW2_scanned.pdf, page: 1, quote: "A white car hit him."}
   - id: C3
     aspect: direction of crossing and side of impact
     type: testimony_vs_physical
@@ -46,6 +50,8 @@ contradictions:
       - {doc: 02_Statement_Anil_Deshmukh_PW1.pdf, page: 1, quote: "hit him on his left side"}
       - {doc: 05_Post_Mortem_Report.pdf, page: 1, quote: "No injuries on the left side of the body."}
       - {doc: 06_Mechanical_Inspection_Report.pdf, page: 1, quote: "front left bumper broken"}
+      - {doc: 05_Post_Mortem_Report.pdf, page: 1, quote: "Injuries on the right side indicate primary impact on the right side of the body."}
+      - {doc: 08_Vehicle_Damage_Photo.jpg, page: 1, quote: "front-left damage, vehicle NV-01-CK-4521"}
   - id: C4
     aspect: speed of the vehicle
     type: testimony_vs_physical

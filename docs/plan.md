@@ -115,7 +115,7 @@ lawyer-ai/
 - Reference for the tracing/eval dashboard: `C:/Users/hp/Desktop/mfird workshop/agent-lab` (look at it when building Stage 3 and the Stage 7 eval report; don't copy it wholesale).
 - **Exit:** smoke agent call per profile shows in Phoenix with tokens; usage row written; unit tests with `TestModel`.
 
-### Stage 4 — Analysis workflow (Find conflicts + Prepare arguments)
+### Stage 4 — Analysis workflow (Find conflicts + Prepare arguments) — DONE (see ADR-0003 notes)
 Sub-steps, each its own agent file with a typed output model:
 - 4a **Extractor** (per document): parties + claims `{speaker, aspect_hint, statement, time, place, chunk_id, quote}`.
 - 4b **Aspect grouper**: one call proposes case aspects ("time of incident", "attacker clothing", "lighting"...), assigns claims.

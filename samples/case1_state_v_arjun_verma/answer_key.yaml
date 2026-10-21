@@ -1,6 +1,8 @@
 # Ground truth for evals. Every ref is {doc, page, quote}; quote is an exact (whitespace-
 # normalised) substring of that page's text in manifest.json. Checked by samples/validate.py.
 # effect = effect on OUR client (defence): helps | hurts.
+# Where several documents state the same side of a contradiction, list each of them: citing any
+# one of them is a correct finding.
 case: case1
 user_side: defence
 
@@ -23,6 +25,7 @@ contradictions:
     explanation: FIR and complainant say about 9:15 pm; eyewitness Ramesh says about 8:30 pm; CCTV still is stamped 20:41:07.
     refs:
       - {doc: 01_FIR_112-2026.pdf, page: 1, quote: "Occurrence: 12-03-2026 at about 21:15 hrs"}
+      - {doc: 02_Statement_Sunita_Sharma_PW1.pdf, page: 1, quote: "at about 9:15 pm I was walking on MG Road"}
       - {doc: 03_Statement_Ramesh_Kumar_PW2.pdf, page: 1, quote: "at about 8:30 pm when a man in a red jacket"}
       - {doc: 08_CCTV_Still_CAM03.png, page: 1, quote: "12-03-2026 20:41:07"}
   - id: C2
@@ -54,6 +57,7 @@ contradictions:
     refs:
       - {doc: 02_Statement_Sunita_Sharma_PW1.pdf, page: 1, quote: "my right elbow was bleeding"}
       - {doc: 10_MLC_Report.pdf, page: 1, quote: "No external injury seen. No abrasion on neck or elbows."}
+      - {doc: 10_MLC_Report.pdf, page: 1, quote: "Opinion: No injury."}
   - id: C5
     aspect: presence of panch witness at recovery
     type: document_vs_document
